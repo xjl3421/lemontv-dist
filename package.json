@@ -1,0 +1,14 @@
+{
+  "name": "lemon-public",
+  "version": "0.0.2",
+  "description": "", 
+  "type": "module",
+  "files":["dist"],
+  "scripts": {
+    "build": "node build.js"
+  },
+  "devDependencies": { 
+    "esbuild": "^0.20.2",   
+    "xgplayer-flv": "^3.0.16"
+  }
+}

@@ -1,0 +1,3365 @@
+var no = Object.defineProperty;
+var io = (t, e, o) => e in t ? no(t, e, {
+    enumerable: !0,
+    configurable: !0,
+    writable: !0,
+    value: o
+}) : t[e] = o;
+var W = (t, e, o) => (io(t, typeof e != "symbol" ? e + "" : e, o), o);
+(function() {
+    const e = document.createElement("link").relList;
+    if (e && e.supports && e.supports("modulepreload")) return;
+    for (const s of document.querySelectorAll('link[rel="modulepreload"]')) i(s);
+    new MutationObserver(s => {
+        for (const l of s)
+            if (l.type === "childList")
+                for (const c of l.addedNodes) c.tagName === "LINK" && c.rel === "modulepreload" && i(c)
+    }).observe(document, {
+        childList: !0,
+        subtree: !0
+    });
+
+    function o(s) {
+        const l = {};
+        return s.integrity && (l.integrity = s.integrity), s.referrerPolicy && (l.referrerPolicy = s.referrerPolicy), s.crossOrigin === "use-credentials" ? l.credentials = "include" : s.crossOrigin === "anonymous" ? l.credentials = "omit" : l.credentials = "same-origin", l
+    }
+
+    function i(s) {
+        if (s.ep) return;
+        s.ep = !0;
+        const l = o(s);
+        fetch(s.href, l)
+    }
+})();
+const ro = Vue.createApp,
+    J = Vue.defineComponent,
+    r = Vue.unref,
+    g = Vue.openBlock,
+    k = Vue.createElementBlock,
+    ue = Vue.createCommentVNode,
+    n = Vue.createElementVNode,
+    ee = Vue.renderList,
+    Q = Vue.Fragment,
+    O = Vue.normalizeClass,
+    lt = Vue.resolveComponent,
+    V = Vue.withCtx,
+    A = Vue.createVNode,
+    G = Vue.vShow,
+    R = Vue.withDirectives,
+    Te = Vue.resolveDynamicComponent,
+    z = Vue.createBlock,
+    ao = Vue.KeepAlive,
+    x = Vue.ref,
+    ge = Vue.onMounted,
+    H = Vue.watch,
+    re = Vue.reactive,
+    it = Vue.watchEffect,
+    U = Vue.computed,
+    pe = Vue.isRef,
+    rt = Vue.vModelText,
+    co = Vue.withKeys,
+    M = Vue.toDisplayString,
+    Rt = Vue.onActivated,
+    at = Vue.resolveDirective,
+    De = Vue.createTextVNode,
+    F = Vue.withModifiers,
+    me = Vue.normalizeStyle,
+    uo = Vue.shallowRef,
+    ot = Vue.nextTick,
+    Ye = Vue.onBeforeUnmount,
+    vo = Vue.onDeactivated,
+    fo = Vue.onUnmounted,
+    Oe = Vue.useModel,
+    Ee = Vue.mergeModels,
+    po = Vue.renderSlot,
+    jt = Vue.useSlots,
+    mo = Vue.provide,
+    ho = Vue.inject,
+    go = Vue.getCurrentInstance,
+    yo = "https://lemonlive2.deno.dev/api/",
+    Lt = "https://lemonlive.deno.dev/api/",
+    se = (t, e, o = {}) => (t == "douyin" && (o.cookie = q[t]), ct(`${yo}${t}/${e}?${new URLSearchParams(o).toString()}`)),
+    nt = async t => {
+        const e = Object.keys(t.follows);
+        if (!e.length) return Promise.resolve(!1);
+        if (t.id == "douyin") return e.forEach(async o => {
+            await se("douyin", "getLiveStatus", {
+                id: o
+            }).then(i => Object.keys(i).forEach(s => {
+                t.follows[s].status = i[s].status
+            }))
+        });
+        await se(t.id, "getLiveStatus", {
+            id: e.join(",")
+        }).then(o => Object.keys(o).forEach(i => {
+            t.follows[i].status = o[i].status
+        }))
+    },
+    wo = t => ct(`${Lt}sync`, {
+        method: "POST",
+        body: t
+    }),
+    xo = t => ct(`${Lt}sync/${t}`),
+    ct = (t, e) => fetch(t, e).then(async o => {
+        const i = await o.json();
+        return i.code != 200 ? Promise.reject(i.msg) : i.data
+    }, o => {
+        console.log(o.message), Promise.reject("网络异常！")
+    }),
+    T = [{
+        name: "虎牙直播",
+        icon: "https://www.huya.com/favicon.ico",
+        id: "huya",
+        categories: x([]),
+        categoryActive: x(0),
+        recommend: {
+            page: 1,
+            hasMore: !0,
+            list: x([])
+        },
+        search: {
+            page: 1,
+            hasMore: !0,
+            list: x([])
+        },
+        follows: re(Ae("huya"))
+    }, {
+        name: "斗鱼直播",
+        icon: "https://www.douyu.com/favicon.ico",
+        id: "douyu",
+        categories: x([]),
+        categoryActive: x(0),
+        recommend: {
+            page: 1,
+            hasMore: !0,
+            list: x([])
+        },
+        search: {
+            page: 1,
+            hasMore: !0,
+            list: x([])
+        },
+        follows: re(Ae("douyu"))
+    }, {
+        name: "抖音直播",
+        icon: "https://www.douyin.com/favicon.ico",
+        id: "douyin",
+        categories: x([]),
+        categoryActive: x(0),
+        recommend: {
+            page: 1,
+            hasMore: !0,
+            list: x([])
+        },
+        search: {
+            page: 1,
+            hasMore: !0,
+            list: x([])
+        },
+        follows: re(Ae("douyin"))
+    }, {
+        name: "哔哩直播",
+        icon: "https://www.bilibili.com/favicon.ico",
+        id: "bilibili",
+        categories: x([]),
+        categoryActive: x(0),
+        recommend: {
+            page: 1,
+            hasMore: !0,
+            list: x([])
+        },
+        search: {
+            page: 1,
+            hasMore: !0,
+            list: x([])
+        },
+        follows: re(Ae("bilibili"))
+    }, {
+        name: "CC直播",
+        icon: "https://cc.163.com/favicon.ico",
+        id: "cc",
+        categories: x([]),
+        categoryActive: x(0),
+        recommend: {
+            page: 1,
+            hasMore: !0,
+            list: x([])
+        },
+        search: {
+            page: 1,
+            hasMore: !0,
+            list: x([])
+        },
+        follows: re(Ae("cc"))
+    }],
+    he = ["huya", "douyu", "douyin", "bilibili", "cc"],
+    Z = x(qe("volume", 100)),
+    N = x(qe("brightness", 100)),
+    ze = t => {
+        Z.value = t ? Math.min(100, Z.value + 5) : Math.max(0, Z.value - 5)
+    },
+    St = t => {
+        N.value = t ? Math.min(200, N.value + 10) : Math.max(50, N.value - 10)
+    };
+
+function Ae(t) {
+    const e = localStorage.getItem("follows-" + t);
+    return e ? JSON.parse(e) : {}
+}
+
+function Ge(t) {
+    const e = T.find(o => o.id == t.siteId);
+    return t.siteId = e.id, e.follows[t.roomId] = {...t, stream: void 0, ws: void 0
+    }, localStorage.setItem("follows-" + t.siteId, JSON.stringify(e.follows)), Reflect.has(e.follows, t.roomId)
+}
+
+function ko(t, e) {
+    const o = T.find(i => i.id == t);
+    return delete o.follows[e], localStorage.setItem("follows-" + t, JSON.stringify(o.follows)), Reflect.has(o.follows, e)
+}
+
+function _o() {
+    T.forEach(t => {
+        for (const e in t.follows) delete t.follows[e];
+        localStorage.removeItem("follows-" + t.id)
+    })
+}
+async
+function At(t, e) {
+    const o = t.categories;
+    o.value.length || (o.value = await se(t.id, "getCategories"));
+    for (const i of o.value)
+        for (const s of i.list)
+            if (s.cid == e) return s;
+    return null
+}
+const h = re(qe("dm-settings", {
+    canvasOpen: !0,
+    canvasFontsize: 18,
+    canvasGap: 10,
+    canvasOpacity: 100,
+    canvasRows: 10,
+    canvasSpeed: 2.5,
+    canvasColorOpen: !1,
+    sideOpen: !0,
+    sideFontsize: 14,
+    sideGap: 2,
+    sideColorOpen: !1,
+    sideClean: 100,
+    colors: ["#ffffff", "#7e22ce", "1d4ed8", "#be185d", "#fcd34d"],
+    blockOpen: !1,
+    blockWords: ""
+}));
+it(() => {
+    Qe("dm-settings", h)
+});
+
+function qe(t, e) {
+    const o = localStorage.getItem(t);
+    return o ? JSON.parse(o) : e
+}
+
+function Qe(t, e) {
+    localStorage.setItem(t, JSON.stringify(e))
+}
+const bo = ["#ffffff", "#000000", "#374151", "#b91c1c", "#f87171", "#fdba74", "#c2410c", "#fcd34d", "#b45309", "#bef264", "#4d7c0f", "#86efac", "#15803d", "#5eead4", "#0f766e", "#67e8f9", "#0e7490", "#93c5fd", "#1d4ed8", "#d8b4fe", "#7e22ce", "#f0abfc", "#a21caf", "#f9a8d4", "#be185d", "#fda4af", "#be123c"],
+    Mt = U(() => h.blockWords.length == 0 ? [] : h.blockWords.split(" ").map(t => new RegExp(t))),
+    q = re(qe("cookies", {}));
+it(() => Qe("cookies", q));
+const L = x(0),
+    Co = VueRouter.createRouter,
+    Io = VueRouter.createWebHistory,
+    ut = VueRouter.useRoute,
+    He = VueRouter.useRouter,
+    So = VueRouter.onBeforeRouteUpdate,
+    Ao = {
+        key: 0,
+        src: "https://live.douyin.com",
+        "pos-absolute": "",
+        width: "0",
+        height: "0",
+        "op-0": "",
+        "b-0": "",
+        style: {
+            "z-index": "-10"
+        }
+    },
+    Mo = n("a", {
+        "text-lg": "",
+        href: "https://github.com/lemonfog/lemon-live",
+        target: "_blank",
+        "pos-absolute": "",
+        "right-1": "",
+        "sm:right-2": "",
+        "md:right-6": "",
+        "top-3": "",
+        class: "i-ri-github-fill",
+        "z-10": ""
+    }, null, -1),
+    To = {
+        "text-sm": "",
+        "pos-fixed": "",
+        "bottom-0": "",
+        "left-0": "",
+        "right-0": "",
+        "md:py-2": "",
+        "b-t-solid": "",
+        b: "",
+        "b-gray-7": "",
+        "md:b-r-solid": "",
+        "md:top-0": "",
+        "md:right-auto": "",
+        flex: "",
+        "justify-around": "",
+        "md:flex-col": "",
+        "md:justify-left": "",
+        "bg-dark-7": "",
+        "z-10": ""
+    },
+    Eo = {
+        "h-full": "",
+        class: "scrolly",
+        "md:px-3": ""
+    },
+    Oo = J({
+        __name: "App",
+        setup(t) {
+            const e = [{
+                    icon: "i-ri-home-smile-line",
+                    link: "/"
+                }, {
+                    icon: "i-ri-apps-2-line",
+                    link: "/category"
+                }, {
+                    icon: "i-ri-heart-line",
+                    link: "/follow"
+                }, {
+                    icon: "i-ri-search-line",
+                    link: "/search"
+                }, {
+                    icon: "i-ri-user-smile-line",
+                    link: "/user"
+                }],
+                o = x(!0);
+            ge(() => {
+                document.querySelector("main").style.height = `calc(${window.innerHeight}px - 3.5rem)`, setTimeout(() => o.value = !1, 5e3)
+            });
+            const i = ut();
+            H(i, () => {
+                const l = i.params.siteid;
+                if (l == null) return;
+                const c = he.findIndex(a => a == l);
+                c != -1 && (L.value = c)
+            });
+            const s = x(!0);
+            return (l, c) => {
+                const a = lt("router-link"),
+                    v = lt("router-view");
+                return g(), k(Q, null, [r(o) ? (g(), k("iframe", Ao)) : ue("", !0), Mo, R(n("div", To, [(g(), k(Q, null, ee(e, d => A(a, {
+                    to: d.link,
+                    "hover:text-amber": "",
+                    "rounded-2": "",
+                    "py-2": "",
+                    "px-4": "",
+                    "m-2": "",
+                    class: O({
+                        "text-amber": l.$route.path == d.link
+                    })
+                }, {
+                    default: V(() => [n("div", {
+                        class: O(d.icon)
+                    }, null, 2)]),
+                    _: 2
+                }, 1032, ["to", "class"])), 64))], 512), [
+                    [G, r(s)]
+                ]), n("main", {
+                    "mx-2": "",
+                    "md:mx-0": "",
+                    class: O(["md:!h-100vh", {
+                        "md:ml-17.5": r(s),
+                        "!h-100vh": !r(s)
+                    }]),
+                    "pt-2": "",
+                    "box-border": ""
+                }, [n("div", {
+                    "text-lg": "",
+                    onClick: c[0] || (c[0] = () => s.value = !r(s)),
+                    "z-10": "",
+                    "pos-absolute": "",
+                    "right-4": "",
+                    "bottom-16": "",
+                    "md:bottom-unset": "",
+                    "md:top-3": "",
+                    "md:right-18": "",
+                    "text-green": "",
+                    "md:text-inherit": "",
+                    class: O(r(s) ? "i-ri-menu-unfold-3-line-2" : "i-ri-menu-line")
+                }, null, 2), n("div", Eo, [A(v, null, {
+                    default: V(({
+                        Component: d
+                    }) => [(g(), z(ao, {
+                        exclude: ["play"]
+                    }, [(g(), z(Te(d)))], 1024))]),
+                    _: 1
+                })])], 2)], 64)
+            }
+        }
+    }),
+    Je = (t, e) => {
+        let o = -1;
+        const i = t.length,
+            s = new Array(i);
+        for (; ++o < i;) s[o] = e(t[o]);
+        return s
+    },
+    Ro = (t, e) => {
+        let o = -1;
+        const i = t.length;
+        for (; ++o < i;) e(t[o])
+    },
+    jo = t => {
+        if (t.scrollTop > 0) return !0;
+        t.scrollTop = 1;
+        const e = !!t.scrollTop;
+        return t.scrollTop = 0, e
+    },
+    Lo = t => {
+        const e = x(t);
+        return [e, i => e.value = i]
+    },
+    Uo = /scroll|auto|overlay/i;
+
+function Vo(t) {
+    return t.tagName !== "HTML" && t.tagName !== "BODY" && t.nodeType === 1
+}
+
+function Bo(t, e = document.body) {
+    let o = t;
+    for (; o && o !== e && Vo(o);) {
+        const {
+            overflowY: i
+        } = window.getComputedStyle(o);
+        if (Uo.test(i)) return o;
+        o = o.parentNode
+    }
+    return e
+}
+
+function zo(t, e = document.body) {
+    const o = x();
+    return ge(() => {
+        t.value && (o.value = Bo(t.value, e))
+    }), o
+}
+const Po = {
+        "text-center": ""
+    },
+    $o = {
+        key: 0,
+        "text-center": ""
+    },
+    dt = J({
+        __name: "list",
+        props: {
+            finshedText: {
+                default: "没有更多了"
+            },
+            errorText: {
+                default: "加载失败，点击重新加载"
+            },
+            immediate: {
+                type: Boolean,
+                default: !0
+            },
+            offset: {
+                default: 50
+            }
+        },
+        emits: ["load", "refresh"],
+        setup(t, {
+            emit: e
+        }) {
+            const o = t,
+                i = x(0),
+                [s, l] = Lo("normal"),
+                c = x(),
+                a = zo(c),
+                v = e,
+                d = () => {
+                    if (i.value = a.value.scrollTop, s.value != "normal") return;
+                    a.value.scrollHeight - a.value.clientHeight - a.value.scrollTop < o.offset && C()
+                };
+            ge(() => {
+                o.immediate && C(), a.value.addEventListener("scroll", d, {
+                    passive: !0
+                })
+            }), Rt(() => {
+                a.value.scrollTop = i.value, a.value.addEventListener("scroll", d)
+            });
+            const p = () => {
+                a.value.removeEventListener("scroll", d)
+            };
+            vo(p), Ye(p);
+            const m = U(() => i.value > 50),
+                w = () => a.value.scrollTop = 0,
+                C = () => {
+                    l("loading"), v("load", l), setTimeout(() => {
+                        jo(a.value) || v("load", l)
+                    }, 2e3)
+                };
+            return (I, j) => (g(), k("div", {
+                ref_key: "root",
+                ref: c,
+                "h-full": "",
+                "select-none": ""
+            }, [po(I.$slots, "default"), R(n("div", Po, "加载中...", 512), [
+                [G, r(s) == "loading"]
+            ]), r(s) == "finshed" ? (g(), k("div", $o, M(o.finshedText), 1)) : ue("", !0), r(s) == "loaderror" ? (g(), k("div", {
+                key: 1,
+                "text-center": "",
+                "cursor-pointer": "",
+                onClick: C
+            }, M(o.errorText), 1)) : ue("", !0), R(n("div", {
+                id: "goTop",
+                "pos-sticky": "",
+                "z-1": "",
+                "text-green": "",
+                "p-1": "",
+                onClick: w,
+                class: "i-ri-arrow-up-s-fill bottom-8 left-[calc(100%-2rem)]"
+            }, null, 512), [
+                [G, r(m)]
+            ])], 512))
+        }
+    }),
+    Fo = ["data-id", "data-site", "href"],
+    Do = {
+        "pos-relative": "",
+        "text-rose-4": "",
+        "rounded-t-2": "",
+        "w-full": "",
+        "aspect-video": ""
+    },
+    No = {
+        block: "",
+        "h-full": "",
+        "rounded-2": "",
+        "select-none": ""
+    },
+    Go = {
+        "pos-absolute": "",
+        "bottom-0": "",
+        "right-0": "",
+        "px-2": "",
+        "py-1": "",
+        "rounded-tl-2": "",
+        "bg-dark-6": ""
+    },
+    Qo = {
+        "line-height-none": "",
+        "pos-absolute": "",
+        "top-0": "",
+        "right-0": "",
+        "px-1": "",
+        "py-1": "",
+        "rounded-tr-1": "",
+        "rounded-bl-2": "",
+        "bg-dark-6": ""
+    },
+    Jo = n("div", {
+        class: "i-mdi-fire"
+    }, null, -1),
+    Wo = {
+        "px-2": "",
+        "text-truncate": "",
+        "leading-normal": ""
+    },
+    Yo = {
+        "px-2": "",
+        "text-truncate": "",
+        "leading-normal": "",
+        "pb-2": ""
+    },
+    Ze = J({
+        __name: "rooms",
+        props: {
+            list: {}
+        },
+        setup(t) {
+            let e;
+            const o = He(),
+                i = x(),
+                s = a => {
+                    clearTimeout(e), e = setTimeout(() => {
+                        const v = c("id", a.target, i.value);
+                        if (!v) return;
+                        const d = c("site", a.target, i.value);
+                        o.push(`/${d}/play/${v}`)
+                    }, 300)
+                },
+                l = a => {
+                    var m;
+                    clearTimeout(e);
+                    const v = c("id", a.target, i.value);
+                    if (!v) return;
+                    const p = `/${c("site",a.target,i.value)}/play/${v}`;
+                    (m = window.open(p, "_blank")) == null || m.location
+                },
+                c = (a, v, d) => {
+                    if (v == d) return null;
+                    const p = v.dataset[a];
+                    return p || c(a, v.parentElement, d)
+                };
+            return (a, v) => {
+                const d = at("lazy");
+                return a.list.value.length > 0 ? (g(), k("div", {
+                    key: 0,
+                    ref_key: "root",
+                    ref: i,
+                    grid: "",
+                    "gap-4": "",
+                    "p-2": "",
+                    "justify-evenly": "",
+                    "cursor-pointer": "",
+                    "select-none": "",
+                    "grid-cols-2": "",
+                    "md:grid-cols-3": "",
+                    "xl:grid-cols-4": "",
+                    class: "2xl:grid-cols-5",
+                    onClick: F(s, ["prevent"]),
+                    onDblclick: F(l, ["prevent"])
+                }, [(g(!0), k(Q, null, ee(a.list.value, p => (g(), k("a", {
+                    "data-id": p.roomId,
+                    "data-site": p.siteId,
+                    href: `/${p.siteId}/play/${p.roomId}`,
+                    key: p.roomId,
+                    shadow: "",
+                    "rounded-2": "",
+                    "b-2px": "",
+                    "b-solid": "",
+                    "b-transparent": "",
+                    "hover:b-amber": "",
+                    "overflow-hidden": ""
+                }, [n("div", Do, [R(n("img", No, null, 512), [
+                    [d, p.cover]
+                ]), n("div", Go, M(p.category), 1), n("div", Qo, [Jo, n("span", null, M(p.online), 1)]), n("div", {
+                    "w-3": "",
+                    "h-3": "",
+                    "rounded-3": "",
+                    "pos-absolute": "",
+                    "top-1": "",
+                    "left-1": "",
+                    class: O([p.status ? "bg-green" : "bg-red"])
+                }, null, 2)]), n("div", Wo, M(p.title), 1), n("div", Yo, M(p.nickname), 1)], 8, Fo))), 128))], 544)) : ue("", !0)
+            }
+        }
+    }),
+    qo = {
+        "h-full": ""
+    },
+    Ho = {
+        flex: "",
+        "py-1": "",
+        "px-2": "",
+        "text-lg": "",
+        "gap-2": ""
+    },
+    Zo = {
+        grow: "",
+        "text-center": ""
+    },
+    Ko = {
+        "hover:text-amber": ""
+    },
+    Xo = {
+        key: 0,
+        class: "h-[calc(100%-3.25rem)] scrolly"
+    },
+    es = J({
+        __name: "categoryRooms",
+        setup(t) {
+            const e = ut(),
+                o = x(""),
+                i = x(),
+                s = {
+                    list: x([]),
+                    page: 1,
+                    hasMore: !0
+                },
+                l = d => {
+                    const {
+                        site: p,
+                        id: m
+                    } = e.meta;
+                    se(p.id, "getCategoryRooms", {
+                        id: m,
+                        pid: i.value,
+                        page: s.page
+                    }).then(w => {
+                        if (s.list.value = s.list.value.concat(w.list), s.hasMore = w.hasMore, q[p.id] || (q[p.id] = w.cookie), !w.hasMore) return d("finshed");
+                        s.page++, d("normal")
+                    }, w => {
+                        o.value = w, d("loaderror")
+                    })
+                },
+                c = x(!1),
+                a = () => {
+                    document.querySelector("#goTop").click(), c.value = !0;
+                    const {
+                        site: d,
+                        id: p
+                    } = e.meta;
+                    se(d.id, "getCategoryRooms", {
+                        id: p,
+                        pid: i.value,
+                        page: s.page
+                    }).then(m => {
+                        s.list.value = m.list, s.hasMore = m.hasMore, s.page++, q[d.id] || (q[d.id] = m.cookie)
+                    }, m => {
+                        o.value = m
+                    }).finally(() => c.value = !1)
+                };
+            let v = e.fullPath;
+            return At(e.meta.site, e.meta.id).then(d => {
+                o.value = (d == null ? void 0 : d.name) || null, i.value = d == null ? void 0 : d.pid
+            }), Rt(function() {
+                v != e.fullPath && (v = e.fullPath, At(e.meta.site, e.meta.id).then(d => {
+                    o.value = (d == null ? void 0 : d.name) || null, i.value = d == null ? void 0 : d.pid
+                }), s.list.value = [], s.page = 1, s.hasMore = !0)
+            }), (d, p) => {
+                var C;
+                const m = Ze,
+                    w = dt;
+                return g(), k("div", qo, [n("div", Ho, [n("div", {
+                    "hover:text-amber": "",
+                    onClick: p[0] || (p[0] = (...I) => d.$router.back && d.$router.back(...I)),
+                    class: "i-ri-arrow-left-line"
+                }), n("div", Zo, [n("span", Ko, M(`${(C=r(e).meta.site)==null?void 0:C.name} ${r(o)==null?"分区不存在":r(o)==""?"加载中":r(o)}`), 1)]), n("div", {
+                    "mr-7": "",
+                    "md:mr-24": "",
+                    "hover:text-amber": "",
+                    onClick: a,
+                    class: O(["i-ri-refresh-line", {
+                        "animate-spin": r(c)
+                    }])
+                }, null, 2)]), r(o) ? (g(), k("div", Xo, [(g(), z(w, {
+                    key: r(v),
+                    onLoad: l
+                }, {
+                    default: V(() => [A(m, {
+                        list: s.list
+                    }, null, 8, ["list"])]),
+                    _: 1
+                }))])) : ue("", !0)])
+            }
+        }
+    }),
+    Ut = Symbol("tabs"),
+    ts = (t, e) => {
+        const o = re([]);
+        return mo(t, Object.assign({
+            link: l => {
+                l.proxy && o.push(l.proxy)
+            },
+            unlink: l => {
+                const c = o.indexOf(l.proxy);
+                o.splice(c, 1)
+            },
+            children: o
+        }, e)), o
+    },
+    Vt = t => {
+        const e = ho(t);
+        if (e == null) return {
+            parent: e,
+            index: x(-1)
+        };
+        const o = go(),
+            {
+                link: i,
+                unlink: s,
+                children: l
+            } = e;
+        i(o), fo(() => s(o));
+        const c = U(() => l.indexOf(o.proxy));
+        return {
+            parent: e,
+            children: l,
+            index: c
+        }
+    },
+    os = {
+        class: "h-full",
+        "box-border": ""
+    },
+    ss = {
+        "w-full": "",
+        "box-border": "",
+        "text-sm": "",
+        "sm:text-base": ""
+    },
+    ls = ["onClick"],
+    ns = {
+        class: "h-[calc(100%-2rem)] scrolly",
+        "box-border": "",
+        "pt-1": ""
+    },
+    Re = J({
+        __name: "tabs",
+        props: Ee({
+            lazy: {
+                type: Boolean,
+                default: !0
+            },
+            grow: {
+                type: Boolean,
+                default: !1
+            },
+            swipeable: {
+                type: Boolean,
+                default: !1
+            },
+            swipeloop: {
+                type: Boolean,
+                default: !0
+            },
+            justify: {
+                default: "justify-center"
+            }
+        }, {
+            active: {
+                default: 0
+            },
+            activeModifiers: {}
+        }),
+        emits: Ee(["tabClick"], ["update:active"]),
+        setup(t, {
+            emit: e
+        }) {
+            const o = Oe(t, "active"),
+                i = t,
+                s = e,
+                l = v => {
+                    o.value = v, s("tabClick", v)
+                },
+                c = ts(Ut, {
+                    active: o,
+                    props: i
+                }),
+                a = U(() => Je(c, v => v.title));
+            return (v, d) => (g(), k("div", os, [n("div", ss, [n("div", {
+                flex: "",
+                p1: "",
+                "sm:gap-1": "",
+                "text-center": "",
+                "h-8": "",
+                "box-border": "",
+                "lg:justify-center": "",
+                class: O([
+                    [r(c).length > 5 || v.grow ? "" : v.justify], "scrollx"
+                ])
+            }, [(g(!0), k(Q, null, ee(r(a), (p, m) => (g(), k("div", {
+                "px-1": "",
+                "sm:px-2": "",
+                "box-border": "",
+                "shrink-0": "",
+                rounded: "",
+                "py-1": "",
+                "line-height-none": "",
+                "text-centercursor-pointer": "",
+                "hover:text-amber": "",
+                "cursor-pointer": "",
+                class: O({
+                    "text-amber": o.value == m,
+                    grow: v.grow
+                }),
+                onClick: w => l(m)
+            }, M(p), 11, ls))), 256))], 2)]), n("div", ns, [(g(), z(Te(v.$slots.default)))])]))
+        }
+    }),
+    is = Symbol("swipe"),
+    rs = {
+        "w-full": "",
+        "h-full": "",
+        "shrink-0": "",
+        "pos-relative": ""
+    },
+    as = J({
+        __name: "swipeItem",
+        emits: ["inited"],
+        setup(t, {
+            emit: e
+        }) {
+            const o = x(!1),
+                {
+                    parent: i,
+                    children: s,
+                    index: l
+                } = Vt(is),
+                c = jt(),
+                a = e,
+                v = U(() => (i == null ? void 0 : i.active.value) == l.value ? (o.value || (o.value = !0, a("inited", l.value)), !0) : l.value == (i.active.value == 0 ? s.length - 1 : i.active.value - 1) || l.value == (i.active.value == s.length - 1 ? 0 : i.active.value + 1)),
+                d = U(() => v.value || o.value || !(i != null && i.props.lazy) ? c.default : null);
+            return (p, m) => R((g(), k("div", rs, [(g(), z(Te(r(d))))], 512)), [
+                [G, r(v)]
+            ])
+        }
+    }),
+    cs = {
+        "h-full": "",
+        "w-full": "",
+        "shrink-0": "",
+        class: "scrolly"
+    },
+    je = J({
+        __name: "tab",
+        props: {
+            title: {}
+        },
+        emits: ["inited"],
+        setup(t, {
+            expose: e,
+            emit: o
+        }) {
+            const i = t,
+                s = x(!1),
+                l = jt(),
+                {
+                    parent: c,
+                    index: a,
+                    children: v
+                } = Vt(Ut),
+                d = o,
+                p = U(() => (c == null ? void 0 : c.active.value) == a.value ? (s.value || (s.value = !0, d("inited", a.value)), !0) : (c == null ? void 0 : c.props.swipeable) && (a.value == (c.active.value == 0 ? v.length - 1 : c.active.value - 1) || a.value == (c.active.value == v.length - 1 ? 0 : c.active.value + 1))),
+                m = U(() => p.value || c != null && c.props.swipeable || s.value || !(c != null && c.props.lazy) ? l.default : null);
+            return e({
+                title: i.title
+            }), (w, C) => {
+                var j, D;
+                const I = as;
+                return R((g(), k("div", cs, [(j = r(c)) != null && j.props.swipeable ? (g(), z(I, {
+                    key: 0
+                }, {
+                    default: V(() => [(g(), z(Te(r(m))))]),
+                    _: 1
+                })) : (g(), z(Te(r(m)), {
+                    key: 1
+                }))], 512)), [
+                    [G, r(p) || ((D = r(c)) == null ? void 0 : D.props.swipeable)]
+                ])
+            }
+        }
+    }),
+    us = {
+        key: 0,
+        "text-center": ""
+    },
+    ds = {
+        "pb-2": "",
+        grid: "",
+        "gap-4": "",
+        "px-4": "",
+        "md:px-2": "",
+        "grid-cols-4": "",
+        "sm:grid-cols-6": "",
+        "md:grid-cols-8": "",
+        "lg:grid-cols-10": "",
+        "xl:grid-cols-15": "",
+        lass: "2xl:grid-cols-18"
+    },
+    vs = {
+        "w-full": "",
+        "aspect-ratio-square": "",
+        rounded: ""
+    },
+    fs = {
+        "w-full": "",
+        "text-truncate": "",
+        "text-xs": "",
+        "md:text-sm": "",
+        "text-center": ""
+    },
+    ps = J({
+        __name: "category",
+        setup(t) {
+            const e = U(() => T[L.value].id),
+                o = x(),
+                i = s => {
+                    T[s].categories.value.length || (o.value = "加载中...", se(e.value, "getCategories").then(l => {
+                        o.value = null, T[s].categories.value = l
+                    }, l => o.value = l))
+                };
+            return (s, l) => {
+                const c = lt("router-link"),
+                    a = je,
+                    v = Re,
+                    d = at("lazy");
+                return g(), z(v, {
+                    active: r(L),
+                    "onUpdate:active": l[0] || (l[0] = p => pe(L) ? L.value = p : null),
+                    onTabClick: l[1] || (l[1] = () => s.$router.push(`/${r(e)}/category`)),
+                    "pt-1": ""
+                }, {
+                    default: V(() => [(g(!0), k(Q, null, ee(r(T), p => (g(), z(a, {
+                        title: p.name,
+                        onInited: i,
+                        key: p.id
+                    }, {
+                        default: V(() => [r(o) ? (g(), k("div", us, M(r(o)), 1)) : (g(), z(v, {
+                            key: 1,
+                            active: p.categoryActive.value,
+                            "onUpdate:active": m => p.categoryActive.value = m
+                        }, {
+                            default: V(() => [(g(!0), k(Q, null, ee(p.categories.value, m => (g(), z(a, {
+                                title: m.name,
+                                key: m.id
+                            }, {
+                                default: V(() => [n("div", ds, [(g(!0), k(Q, null, ee(m.list, w => (g(), z(c, {
+                                    to: `/${p.id}/category/${w.cid}`,
+                                    "cursor-pointer": ""
+                                }, {
+                                    default: V(() => [R(n("img", vs, null, 512), [
+                                        [d, w.pic]
+                                    ]), n("div", fs, M(w.name), 1)]),
+                                    _: 2
+                                }, 1032, ["to"]))), 256))])]),
+                                _: 2
+                            }, 1032, ["title"]))), 128))]),
+                            _: 2
+                        }, 1032, ["active", "onUpdate:active"]))]),
+                        _: 2
+                    }, 1032, ["title"]))), 128))]),
+                    _: 1
+                }, 8, ["active"])
+            }
+        }
+    }),
+    ms = {
+        "text-center": "",
+        "py-1": ""
+    },
+    hs = {
+        class: "w-60% max-w-md pos-relative inline-block"
+    },
+    gs = {
+        class: "h-[calc(100%-3rem)]"
+    },
+    ys = {
+        key: 1
+    },
+    ws = {
+        key: 1
+    },
+    xs = J({
+        __name: "search",
+        setup(t) {
+            const e = x(""),
+                o = U(() => T[L.value]),
+                i = x(),
+                s = () => {
+                    if (!e.value) return Promise.resolve();
+                    const p = o.value.search;
+                    p.list.value = [], p.page = 1, p.hasMore = !0, i.value = "搜索中...";
+                    const m = o.value.id;
+                    return se(m, "searchRooms", {
+                        page: p.page,
+                        kw: e.value
+                    }).then(w => {
+                        p.list.value = w.list, p.hasMore = w.hasMore, p.page += 1, i.value = "finished", q[m] || (q[m] = w.cookie)
+                    }, w => i.value = w)
+                },
+                l = p => {
+                    const m = o.value.search,
+                        w = o.value.id;
+                    se(w, "searchRooms", {
+                        page: m.page,
+                        kw: e.value
+                    }).then(C => {
+                        if (m.list.value = m.list.value.concat(C.list), m.hasMore = C.hasMore, q[w] || (q[w] = C.cookie), !m.hasMore) return p("finshed");
+                        m.page += 1, p("normal")
+                    }, C => {
+                        p("loaderror")
+                    })
+                },
+                c = p => {
+                    a.push(`/${he[p]}/search`), !v() && T[p].search.page == 1 && s()
+                },
+                a = He(),
+                v = () => {
+                    if (e.value) return /^[\d]*$/.test(e.value) ? (a.push(`/play/${o.value.id}/${e.value}`), !0) : !1
+                },
+                d = () => {
+                    v() || (T.forEach(p => p.search.page = 1), s())
+                };
+            return (p, m) => {
+                const w = Ze,
+                    C = dt,
+                    I = je,
+                    j = Re;
+                return g(), k(Q, null, [n("div", ms, [n("div", hs, [R(n("input", {
+                    "md:text-4": "",
+                    type: "text",
+                    "onUpdate:modelValue": m[0] || (m[0] = D => pe(e) ? e.value = D : null),
+                    "box-border": "",
+                    "w-full": "",
+                    "py-2.5": "",
+                    "pl-3": "",
+                    "pr-9": "",
+                    "text-white": "",
+                    "bg-transparent": "",
+                    "b-1": "",
+                    "b-green": "",
+                    "rounded-6": "",
+                    "outline-0": "",
+                    onKeydown: co(d, ["enter"]),
+                    placeholder: "请输入房间号或关键字"
+                }, null, 544), [
+                    [rt, r(e), void 0, {
+                        trim: !0
+                    }]
+                ]), n("div", {
+                    class: "i-ri-search-line top-50%",
+                    absolute: "",
+                    "right-3": "",
+                    onClick: d,
+                    style: {
+                        transform: "translateY(-50%)"
+                    }
+                })])]), n("div", gs, [A(j, {
+                    active: r(L),
+                    "onUpdate:active": m[1] || (m[1] = D => pe(L) ? L.value = D : null),
+                    onTabClick: c
+                }, {
+                    default: V(() => [(g(!0), k(Q, null, ee(r(T), D => (g(), z(I, {
+                        title: D.name,
+                        key: D.id
+                    }, {
+                        default: V(() => [r(i) == "finished" ? (g(), k(Q, {
+                            key: 0
+                        }, [D.search.list.value.length ? (g(), z(C, {
+                            key: 0,
+                            onLoad: l
+                        }, {
+                            default: V(() => [A(w, {
+                                list: D.search.list
+                            }, null, 8, ["list"])]),
+                            _: 2
+                        }, 1024)) : (g(), k("div", ys, " 什么也没有找到 "))], 64)) : (g(), k("div", ws, M(r(i)), 1))]),
+                        _: 2
+                    }, 1032, ["title"]))), 128))]),
+                    _: 1
+                }, 8, ["active"])])], 64)
+            }
+        }
+    }),
+    ks = {
+        flex: "",
+        "items-center": ""
+    },
+    _s = {
+        "grow-1": "",
+        "justify-center": "",
+        "gap-2": "",
+        "p-2": "",
+        flex: ""
+    },
+    bs = {
+        "pos-relative": ""
+    },
+    Cs = {
+        "pos-absolute": "",
+        "top-0": "",
+        "right-0": "",
+        style: {
+            transform: "translateX(150%)"
+        },
+        "rounded-6": "",
+        "bg-white": "",
+        shadow: "",
+        "text-amber": ""
+    },
+    Is = n("div", {
+        class: "i-ri-refresh-line animate-spin"
+    }, null, -1),
+    Ss = [Is],
+    As = {
+        class: "bg-gray-7 gap-4 p-12 rounded-2 flex flex-col shadow relative mt-30"
+    },
+    Ms = {
+        class: "flex justify-center items-center"
+    },
+    Ts = n("div", {
+        class: "text-8"
+    }, "同步", -1),
+    Es = n("div", {
+        class: "i-ri-refresh-line animate-spin"
+    }, null, -1),
+    Os = [Es],
+    Rs = {
+        class: "flex gap-4"
+    },
+    js = {
+        class: "py-2 min-w-16"
+    },
+    Ls = {
+        class: "flex gap-4"
+    },
+    Us = {
+        class: "py-2 min-w-16"
+    },
+    Vs = n("div", null, [n("div", null, "1. key 有效期 10 分钟"), n("div", null, "2. 拉取需要输入 key"), n("div", null, "3. 推送自动生成 key ")], -1),
+    Bs = {
+        class: "h-[calc(100%-3rem)]"
+    },
+    zs = J({
+        __name: "follow",
+        setup(t) {
+            const e = Je(T, I => ({
+                name: I.name,
+                list: U(() => Object.values(I.follows).sort(j => j.status ? -1 : 0))
+            }));
+            e.unshift({
+                name: "全部",
+                list: U(() => T.map(I => Object.values(I.follows)).flat().sort(I => I.status ? -1 : 0))
+            });
+            const o = I => {
+                    var j;
+                    s.value = !0, I == 0 ? Promise.all(Je(T, nt)).finally(i) : (j = nt(T[I - 1])) == null || j.finally(i)
+                },
+                i = () => setTimeout(() => s.value = !1, 300),
+                s = x(!1),
+                l = x(""),
+                c = x(!1),
+                a = x([]),
+                v = x(!1),
+                d = () => setTimeout(() => v.value = !1, 300),
+                p = () => {
+                    v.value || (v.value = !0, wo(JSON.stringify(e[0].list.value)).then(I => {
+                        l.value = I, a.value = e[0].list.value
+                    }).finally(d))
+                },
+                m = () => {
+                    if (!v.value) {
+                        if (!/^\d{4}$/.test(l.value)) return l.value = "";
+                        v.value = !0, xo(l.value).then(I => {
+                            a.value = I
+                        }).finally(d)
+                    }
+                },
+                w = () => {
+                    v.value || (v.value = !0, a.value.forEach(I => Ge(I)), d())
+                },
+                C = () => {
+                    v.value || (v.value = !0, _o(), a.value.forEach(I => Ge(I)), d())
+                };
+            return o(0), (I, j) => {
+                const D = Ze,
+                    S = je,
+                    xe = Re;
+                return g(), k(Q, null, [n("div", ks, [n("div", _s, [n("div", bs, [De("关注用户 "), n("button", {
+                    class: "bg-green-5 rounded border-none cursor-pointer",
+                    onClick: j[0] || (j[0] = te => c.value = !0)
+                }, "同步"), R(n("div", Cs, Ss, 512), [
+                    [G, r(s)]
+                ])]), R(n("div", {
+                    class: "absolute z-10 top-0 left-0 right-0 bottom-0 flex justify-center items-start",
+                    onClick: j[3] || (j[3] = F(te => c.value = !1, ["self"]))
+                }, [n("div", As, [n("div", Ms, [Ts, R(n("div", null, Os, 512), [
+                    [G, r(v)]
+                ])]), R(n("input", {
+                    class: "outline-none p-2 border-none rounded-2 flex-1",
+                    "onUpdate:modelValue": j[1] || (j[1] = te => pe(l) ? l.value = te : null),
+                    type: "text",
+                    placeholder: "key"
+                }, null, 512), [
+                    [rt, r(l)]
+                ]), n("div", Rs, [n("div", js, "本地 " + M(r(e)[0].list.value.length), 1), n("div", {
+                    onClick: w,
+                    class: "bg-green-7 hover:bg-op-50 cursor-pointer rounded py-2 px-4"
+                }, " 合并 "), n("div", {
+                    onClick: C,
+                    class: "bg-green-7 hover:bg-op-50 cursor-pointer rounded py-2 px-4"
+                }, "覆盖")]), n("div", Ls, [n("div", Us, "云端 " + M(r(a).length), 1), n("div", {
+                    onClick: m,
+                    class: "bg-green-7 hover:bg-op-50 cursor-pointer rounded py-2 px-4"
+                }, "拉取"), n("div", {
+                    onClick: p,
+                    class: "bg-green-7 hover:bg-op-50 cursor-pointer rounded py-2 px-4"
+                }, "推送")]), Vs, n("div", {
+                    onClick: j[2] || (j[2] = F(te => c.value = !1, ["stop"])),
+                    class: "i-ri-close-circle-line absolute right-2 top-2"
+                })])], 512), [
+                    [G, r(c)]
+                ])])]), n("div", Bs, [A(xe, {
+                    onTabClick: o
+                }, {
+                    default: V(() => [(g(!0), k(Q, null, ee(r(e), te => (g(), z(S, {
+                        title: te.name
+                    }, {
+                        default: V(() => [A(D, {
+                            list: te.list
+                        }, null, 8, ["list"])]),
+                        _: 2
+                    }, 1032, ["title"]))), 256))]),
+                    _: 1
+                })])], 64)
+            }
+        }
+    }),
+    Ps = {
+        "text-6": "",
+        "rounded-6": "",
+        "bg-white": "",
+        shadow: "",
+        "text-amber": "",
+        "pos-absolute": "",
+        "top-2": "",
+        "z-10": "",
+        style: {
+            left: "50%",
+            transform: "translateX(-50%)"
+        }
+    },
+    $s = n("div", {
+        class: "i-ri-refresh-line animate-spin"
+    }, null, -1),
+    Fs = [$s],
+    Ds = J({
+        __name: "index",
+        setup(t) {
+            const e = He(),
+                o = U(() => T[L.value].id),
+                i = a => {
+                    const v = T[L.value].recommend;
+                    se(o.value, "getRecommendRooms", {
+                        page: v.page
+                    }).then(d => {
+                        if (v.list.value = v.list.value.concat(d.list), v.hasMore = d.hasMore, q[o.value] || (q[o.value] = d.cookie), !v.hasMore) return a("finshed");
+                        v.page++, a("normal")
+                    }, () => a("loaderror"))
+                },
+                s = x(!1);
+            let l = 0;
+            const c = () => {
+                if (e.push(`/${o.value}`), l != L.value) return l = L.value;
+                document.querySelector("#goTop").click();
+                const a = T[L.value].recommend;
+                s.value = !0, a.page = 1, se(o.value, "getRecommendRooms", {
+                    page: a.page
+                }).then(v => {
+                    a.list.value = v.list, a.hasMore = v.hasMore, a.page++, q[o.value] || (q[o.value] = v.cookie)
+                }).finally(() => setTimeout(() => s.value = !1, 300))
+            };
+            return (a, v) => {
+                const d = Ze,
+                    p = dt,
+                    m = je,
+                    w = Re;
+                return g(), z(w, {
+                    active: r(L),
+                    "onUpdate:active": v[0] || (v[0] = C => pe(L) ? L.value = C : null),
+                    onTabClick: c,
+                    "pt-1": ""
+                }, {
+                    default: V(() => [(g(!0), k(Q, null, ee(r(T), C => (g(), z(m, {
+                        key: C.id,
+                        title: C.name,
+                        "pos-relative": ""
+                    }, {
+                        default: V(() => [R(n("div", Ps, Fs, 512), [
+                            [G, r(s)]
+                        ]), A(p, {
+                            onLoad: i,
+                            immediate: !0,
+                            "h-full": ""
+                        }, {
+                            default: V(() => [A(d, {
+                                list: C.recommend.list
+                            }, null, 8, ["list"])]),
+                            _: 2
+                        }, 1024)]),
+                        _: 2
+                    }, 1032, ["title"]))), 128))]),
+                    _: 1
+                }, 8, ["active"])
+            }
+        }
+    }),
+    Ns = J({
+        __name: "switch",
+        props: {
+            value: {
+                type: Boolean,
+                required: !0
+            },
+            valueModifiers: {}
+        },
+        emits: ["update:value"],
+        setup(t) {
+            const e = Oe(t, "value");
+            return (o, i) => (g(), k("div", {
+                "pos-relative": "",
+                style: {
+                    transition: "background-color .3s"
+                },
+                onClick: i[0] || (i[0] = () => e.value = !e.value),
+                "w-12": "",
+                "inline-block": "",
+                "cursor-pointer": "",
+                "rounded-6": "",
+                "h-6": "",
+                class: O([e.value ? "bg-amber" : "bg-gray-4"])
+            }, [n("div", {
+                "w-6": "",
+                "h-full": "",
+                "rounded-6": "",
+                "bg-white": "",
+                style: me([{
+                        transition: "transform .3s"
+                    },
+                    e.value ? "transform:translateX(1.5rem)" : ""
+                ])
+            }, null, 4)], 2))
+        }
+    }),
+    Gs = {
+        "rounded-4": "",
+        flex: "",
+        "bg-gray-7": "",
+        "w-min": "",
+        "p-2": "",
+        "py-1": "",
+        "gap-2": ""
+    },
+    Qs = J({
+        __name: "stepper",
+        props: Ee({
+            max: {},
+            min: {},
+            step: {}
+        }, {
+            value: {
+                required: !0
+            },
+            valueModifiers: {}
+        }),
+        emits: ["update:value"],
+        setup(t) {
+            const e = t,
+                o = Oe(t, "value"),
+                i = () => o.value = Math.min(o.value + e.step, e.max),
+                s = () => o.value = Math.max(o.value - e.step, e.min);
+            return (l, c) => (g(), k("div", Gs, [n("div", {
+                class: "i-ri-subtract-fill",
+                onClick: s
+            }), n("div", null, M(o.value), 1), n("div", {
+                class: "i-ri-add-fill",
+                onClick: i
+            })]))
+        }
+    });
+
+function Js() {
+    try {
+        return document.createEvent("TouchEvent"), !0
+    } catch {
+        return !1
+    }
+}
+const Ne = Js(),
+    Ws = t => Ne ? t.touches == null ? t : t.touches[0] || t.changedTouches[0] : t,
+    Ys = J({
+        __name: "slider",
+        props: Ee({
+            max: {
+                default: 100
+            },
+            min: {
+                default: 0
+            },
+            width: {
+                default: 30
+            },
+            height: {
+                default: 100
+            }
+        }, {
+            value: {
+                required: !0
+            },
+            valueModifiers: {}
+        }),
+        emits: ["update:value"],
+        setup(t) {
+            const e = t,
+                o = Oe(t, "value"),
+                i = x(),
+                s = e.width < e.height;
+            let l;
+            const c = m => {
+                    m.stopPropagation(), d(m), document.addEventListener("mousemove", d, !0), document.addEventListener("mouseup", p, !0)
+                },
+                a = U(() => (o.value - e.min) / (e.max - e.min) * 100),
+                v = U(() => {
+                    const m = 100 - a.value,
+                        w = `top:${m}%`,
+                        C = `left:${m}%`;
+                    return s ? {
+                        loaded: w,
+                        indicator: w
+                    } : {
+                        loaded: `${C};transform:translateX(-100%)`,
+                        indicator: C
+                    }
+                }),
+                d = m => {
+                    m.stopPropagation(), m = Ws(m);
+                    const C = 100 - (Math.min(s ? l.height : l.width, Math.max(0, s ? m.clientY - l.y : m.clientX - l.x)) / (s ? l.height : l.width) * 100 | 0);
+                    o.value = ((e.max - e.min) * C | 0) / 100 + e.min | 0
+                },
+                p = m => {
+                    m.stopPropagation(), document.removeEventListener("mousemove", d, !0), document.removeEventListener("mouseup", p, !0)
+                };
+            return ge(() => {
+                l = i.value.getBoundingClientRect(), i.value.addEventListener("mousedown", c, !0)
+            }), Ye(() => {
+                i.value.removeEventListener("mousedown", c, !0)
+            }), (m, w) => (g(), k("div", {
+                "cursor-pointer": "",
+                style: me({
+                    width: `${e.width}px`,
+                    height: `${e.height}px`
+                }),
+                class: O(s ? " py-4 " : "px-4"),
+                flex: "",
+                "justify-center": ""
+            }, [n("div", {
+                "w-full": "",
+                "h-full": "",
+                "pos-relative": "",
+                flex: "",
+                "justify-center": "",
+                "items-center": "",
+                ref_key: "root",
+                ref: i,
+                onClick: d
+            }, [n("div", {
+                "bg-gray": "",
+                "pos-relative": "",
+                "overflow-hidden": "",
+                class: O(s ? "h-full w-2px" : "w-full h-2px")
+            }, [n("div", {
+                "w-full": "",
+                "bg-amber": "",
+                "h-full": "",
+                "pos-absolute": "",
+                style: me(r(v).loaded)
+            }, null, 4)], 2), n("div", {
+                "pos-absolute": "",
+                "w-12px": "",
+                "h-12px": "",
+                "bg-amber": "",
+                "rounded-2": "",
+                style: me(r(v).indicator),
+                class: O(s ? "-mt-6px" : "-ml-6px")
+            }, null, 6)], 512)], 6))
+        }
+    }),
+    qs = {
+        key: 0,
+        "z-1": "",
+        fixed: "",
+        "top-0": "",
+        "bottom-0": "",
+        "left-0": "",
+        "right-0": "",
+        "bg-transparent": "",
+        "data-index": "-1"
+    },
+    Hs = {
+        "p-1": "",
+        "data-index": "-1",
+        "hover:text-amber": ""
+    },
+    Zs = {
+        "text-center": "",
+        "z-1": "",
+        "pos-absolute": "",
+        "top-0": "",
+        class: "left-50%",
+        "w-max": "",
+        style: {
+            transform: "translate3d(-50%,-100%,0)"
+        }
+    },
+    Ks = ["data-index"],
+    Xs = J({
+        __name: "select",
+        props: Ee(["list"], {
+            active: {
+                required: !0
+            },
+            activeModifiers: {}
+        }),
+        emits: ["update:active"],
+        setup(t) {
+            const e = Oe(t, "active"),
+                o = x(!1),
+                i = s => {
+                    const l = s.target.dataset.index;
+                    l && (l != "-1" && (e.value = parseInt(l)), o.value = !o.value)
+                };
+            return (s, l) => (g(), k("div", {
+                "inline-block": "",
+                "pos-relative": "",
+                onClick: i,
+                "cursor-pointer": "",
+                "text-center": ""
+            }, [r(o) ? (g(), k("div", qs)) : ue("", !0), n("div", Hs, M(t.list[e.value]), 1), R(n("div", Zs, [(g(!0), k(Q, null, ee(t.list, (c, a) => (g(), k("div", {
+                "data-index": a,
+                class: O({
+                    "text-amber": a == e.value
+                }),
+                "p-1": "",
+                "hover:text-amber": ""
+            }, M(c), 11, Ks))), 256))], 512), [
+                [G, r(o)]
+            ])]))
+        }
+    }),
+    Tt = "data:image/png;base64,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",
+    Et = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAMAAACahl6sAAAArlBMVEUAAAD///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8tivQqAAAAOXRSTlMAQL+AVSFwReurxLHcZuZhaxvx9dKPfhIHXc6LUC4LeVmgOMiFNCbXm5N04LeoSzz7pBYru5YPA5jd4ld+AAAKR0lEQVR42uzba3OiMBQG4INXvKGiUuttvaPVarW27vv//9h21umCJlZOBMPO8Hy2Dm+TcMIJUiKRSCQSiUQikUj8p8bL1JdMm5RtXr++YGeQVpkUTswlqUm7OOmkSZ8MPAW1HPDoS5KBX0EtRwySHMs40yKuCs5tSIseLmSIZ2biXIm0KOGCWyeWAxCLIYFgRBxTCJakA0QV1swUrUkHiKx3CipbhuiVdICAcw/eQWJKOpQgkaNgXvAlJou9B4nGjIIw3iBRJC2OZaiu18EEMhnSIwcZh25bQuaDdClAJk+3PEOmOCBd3k1IFNu3/syChD0jfSqQ6arc7lAlnXaQ6dFPHMi0SKvsChLNPV23gUzqSHpVIfObrto3IWH3SbcRZJ6Znx+SdvUyJFZZkqtBpksxMITMjqTGDUikKBY+IFMjiXYKEvacYuGpCQmzT6JuXBfISQ8yTRIMY7dA2vV+PlNLT7vLxei1sD5AJiUoSz9Weh0tp07tuWfM5vXPIz1CNl/pFiZlGxFqmOVmsdCt5LMUjf7LGg9WqryHnqLVhBadVp/CM2+9QZu31pzCUZ/a0Mqe1ikEWxfalYd0twxioUV3chATE7pLCvFBd5ggRsqk7IBYWas3d5kaljtJBTRxrQaYCqSkCyn77FoPhUXLyVV7xiz71Cam9lN2ZvSqOae1KBxSPkXXDO/etYXI/TDq9CDjXAGCHvGtcWk0psfavuJC55O4arhQytPjZex7J9d+hTNWjbSYr3Buc9+AFLKkyxpnXu8q6QXSaIEzY+Iw4pPjsp4t1XtVnSfSKg8/mzPL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",
+    Pe = window.Flv,
+    $e = window.Hls,
+    el = window.pako.ungzip;
+
+function tl(t) {
+    return ol(ft(t))
+}
+
+function ol(t) {
+    let e = {};
+    e: for (; !we(t);) {
+        let o = B(t);
+        switch (o >>> 3) {
+            case 0:
+                break e;
+            case 1:
+                {
+                    let i = vt(t);
+                    (e.messagesList || (e.messagesList = [])).push(sl(t)), t.limit = i;
+                    break
+                }
+            case 8:
+                {
+                    e.heartbeatDuration = ce(t, !0);
+                    break
+                }
+            case 9:
+                {
+                    e.needAck = !!Y(t);
+                    break
+                }
+            default:
+                ye(t, o & 7)
+        }
+    }
+    return e
+}
+
+function sl(t) {
+    let e = {};
+    e: for (; !we(t);) {
+        let o = B(t);
+        switch (o >>> 3) {
+            case 0:
+                break e;
+            case 1:
+                {
+                    e.method = de(t, B(t));
+                    break
+                }
+            case 2:
+                {
+                    e.payload = Pt(t, B(t));
+                    break
+                }
+            case 3:
+                {
+                    e.msgId = ce(t, !1);
+                    break
+                }
+            case 4:
+                {
+                    e.msgType = B(t);
+                    break
+                }
+            case 5:
+                {
+                    e.offset = ce(t, !1);
+                    break
+                }
+            case 6:
+                {
+                    e.needWrdsStore = !!Y(t);
+                    break
+                }
+            case 7:
+                {
+                    e.wrdsVersion = ce(t, !1);
+                    break
+                }
+            case 8:
+                {
+                    e.wrdsSubKey = de(t, B(t));
+                    break
+                }
+            default:
+                ye(t, o & 7)
+        }
+    }
+    return e
+}
+
+function ll(t) {
+    return nl(ft(t))
+}
+
+function nl(t) {
+    let e = {};
+    e: for (; !we(t);) {
+        let o = B(t);
+        switch (o >>> 3) {
+            case 0:
+                break e;
+            case 2:
+                {
+                    let i = vt(t);
+                    e.user = il(t), t.limit = i;
+                    break
+                }
+            case 3:
+                {
+                    e.content = de(t, B(t));
+                    break
+                }
+            default:
+                ye(t, o & 7)
+        }
+    }
+    return e
+}
+
+function il(t) {
+    let e = {};
+    e: for (; !we(t);) {
+        let o = B(t);
+        switch (o >>> 3) {
+            case 0:
+                break e;
+            case 3:
+                {
+                    e.nickName = de(t, B(t));
+                    break
+                }
+            default:
+                ye(t, o & 7)
+        }
+    }
+    return e
+}
+
+function rl(t) {
+    let e = zt();
+    return al(t, e), hl(e)
+}
+
+function al(t, e) {
+    let o = t.seqId;
+    o !== void 0 && (K(e, 8), Fe(e, o));
+    let i = t.logId;
+    i !== void 0 && (K(e, 16), Fe(e, i));
+    let s = t.service;
+    s !== void 0 && (K(e, 24), Fe(e, s));
+    let l = t.method;
+    l !== void 0 && (K(e, 32), Fe(e, l));
+    let c = t.headersList;
+    if (c !== void 0)
+        for (let p of c) {
+            K(e, 42);
+            let m = zt();
+            dl(p, m), K(e, m.limit), yl(e, m), ml(m)
+        }
+    let a = t.payloadEncoding;
+    a !== void 0 && (K(e, 50), We(e, a));
+    let v = t.payloadType;
+    v !== void 0 && (K(e, 58), We(e, v));
+    let d = t.payload;
+    d !== void 0 && (K(e, 66), K(e, d.length), gl(e, d))
+}
+
+function cl(t) {
+    return ul(ft(t))
+}
+
+function ul(t) {
+    let e = {};
+    e: for (; !we(t);) {
+        let o = B(t);
+        switch (o >>> 3) {
+            case 0:
+                break e;
+            case 1:
+                {
+                    e.seqId = ce(t, !0);
+                    break
+                }
+            case 2:
+                {
+                    e.logId = ce(t, !0);
+                    break
+                }
+            case 3:
+                {
+                    e.service = ce(t, !0);
+                    break
+                }
+            case 4:
+                {
+                    e.method = ce(t, !0);
+                    break
+                }
+            case 5:
+                {
+                    let i = vt(t);
+                    (e.headersList || (e.headersList = [])).push(vl(t)), t.limit = i;
+                    break
+                }
+            case 6:
+                {
+                    e.payloadEncoding = de(t, B(t));
+                    break
+                }
+            case 7:
+                {
+                    e.payloadType = de(t, B(t));
+                    break
+                }
+            case 8:
+                {
+                    e.payload = Pt(t, B(t));
+                    break
+                }
+            default:
+                ye(t, o & 7)
+        }
+    }
+    return e
+}
+
+function dl(t, e) {
+    let o = t.key;
+    o !== void 0 && (K(e, 10), We(e, o));
+    let i = t.value;
+    i !== void 0 && (K(e, 18), We(e, i))
+}
+
+function vl(t) {
+    let e = {};
+    e: for (; !we(t);) {
+        let o = B(t);
+        switch (o >>> 3) {
+            case 0:
+                break e;
+            case 1:
+                {
+                    e.key = de(t, B(t));
+                    break
+                }
+            case 2:
+                {
+                    e.value = de(t, B(t));
+                    break
+                }
+            default:
+                ye(t, o & 7)
+        }
+    }
+    return e
+}
+
+function vt(t) {
+    let e = B(t),
+        o = t.limit;
+    return t.limit = t.offset + e, o
+}
+
+function ye(t, e) {
+    switch (e) {
+        case 0:
+            for (; Y(t) & 128;);
+            break;
+        case 2:
+            st(t, B(t));
+            break;
+        case 5:
+            st(t, 4);
+            break;
+        case 1:
+            st(t, 8);
+            break;
+        default:
+            throw new Error("Unimplemented type: " + e)
+    }
+}
+let fl = new Float32Array(1);
+new Uint8Array(fl.buffer);
+let pl = new Float64Array(1);
+new Uint8Array(pl.buffer);
+let Bt = [];
+
+function zt() {
+    const t = Bt.pop();
+    return t ? (t.offset = t.limit = 0, t) : {
+        bytes: new Uint8Array(64),
+        offset: 0,
+        limit: 0
+    }
+}
+
+function ml(t) {
+    Bt.push(t)
+}
+
+function ft(t) {
+    return {
+        bytes: t,
+        offset: 0,
+        limit: t.length
+    }
+}
+
+function hl(t) {
+    let e = t.bytes,
+        o = t.limit;
+    return e.length === o ? e : e.subarray(0, o)
+}
+
+function st(t, e) {
+    if (t.offset + e > t.limit) throw new Error("Skip past limit");
+    t.offset += e
+}
+
+function we(t) {
+    return t.offset >= t.limit
+}
+
+function Le(t, e) {
+    let o = t.bytes,
+        i = t.offset,
+        s = t.limit,
+        l = i + e;
+    if (l > o.length) {
+        let c = new Uint8Array(l * 2);
+        c.set(o), t.bytes = c
+    }
+    return t.offset = l, l > s && (t.limit = l), i
+}
+
+function pt(t, e) {
+    let o = t.offset;
+    if (o + e > t.limit) throw new Error("Read past limit");
+    return t.offset += e, o
+}
+
+function Pt(t, e) {
+    let o = pt(t, e);
+    return t.bytes.subarray(o, o + e)
+}
+
+function gl(t, e) {
+    let o = Le(t, e.length);
+    t.bytes.set(e, o)
+}
+
+function de(t, e) {
+    let o = pt(t, e),
+        i = String.fromCharCode,
+        s = t.bytes,
+        l = "�",
+        c = "";
+    for (let a = 0; a < e; a++) {
+        let v = s[a + o],
+            d, p, m, w;
+        v & 128 ? (v & 224) === 192 ? a + 1 >= e ? c += l : (d = s[a + o + 1], (d & 192) !== 128 ? c += l : (w = (v & 31) << 6 | d & 63, w < 128 ? c += l : (c += i(w), a++))) : (v & 240) == 224 ? a + 2 >= e ? c += l : (d = s[a + o + 1], p = s[a + o + 2], ((d | p << 8) & 49344) !== 32896 ? c += l : (w = (v & 15) << 12 | (d & 63) << 6 | p & 63, w < 2048 || w >= 55296 && w <= 57343 ? c += l : (c += i(w), a += 2))) : (v & 248) == 240 ? a + 3 >= e ? c += l : (d = s[a + o + 1], p = s[a + o + 2], m = s[a + o + 3], ((d | p << 8 | m << 16) & 12632256) !== 8421504 ? c += l : (w = (v & 7) << 18 | (d & 63) << 12 | (p & 63) << 6 | m & 63, w < 65536 || w > 1114111 ? c += l : (w -= 65536, c += i((w >> 10) + 55296, (w & 1023) + 56320), a += 3))) : c += l : c += i(v)
+    }
+    return c
+}
+
+function We(t, e) {
+    let o = e.length,
+        i = 0;
+    for (let c = 0; c < o; c++) {
+        let a = e.charCodeAt(c);
+        a >= 55296 && a <= 56319 && c + 1 < o && (a = (a << 10) + e.charCodeAt(++c) - 56613888), i += a < 128 ? 1 : a < 2048 ? 2 : a < 65536 ? 3 : 4
+    }
+    K(t, i);
+    let s = Le(t, i),
+        l = t.bytes;
+    for (let c = 0; c < o; c++) {
+        let a = e.charCodeAt(c);
+        a >= 55296 && a <= 56319 && c + 1 < o && (a = (a << 10) + e.charCodeAt(++c) - 56613888), a < 128 ? l[s++] = a : (a < 2048 ? l[s++] = a >> 6 & 31 | 192 : (a < 65536 ? l[s++] = a >> 12 & 15 | 224 : (l[s++] = a >> 18 & 7 | 240, l[s++] = a >> 12 & 63 | 128), l[s++] = a >> 6 & 63 | 128), l[s++] = a & 63 | 128)
+    }
+}
+
+function yl(t, e) {
+    let o = Le(t, e.limit),
+        i = t.bytes,
+        s = e.bytes;
+    for (let l = 0, c = e.limit; l < c; l++) i[l + o] = s[l]
+}
+
+function Y(t) {
+    return t.bytes[pt(t, 1)]
+}
+
+function Ot(t, e) {
+    let o = Le(t, 1);
+    t.bytes[o] = e
+}
+
+function B(t) {
+    let e = 0,
+        o = 0,
+        i;
+    do i = Y(t), e < 32 && (o |= (i & 127) << e), e += 7; while (i & 128);
+    return o
+}
+
+function K(t, e) {
+    for (e >>>= 0; e >= 128;) Ot(t, e & 127 | 128), e >>>= 7;
+    Ot(t, e)
+}
+
+function ce(t, e) {
+    let o = 0,
+        i = 0,
+        s = 0,
+        l;
+    return l = Y(t), o = l & 127, l & 128 && (l = Y(t), o |= (l & 127) << 7, l & 128 && (l = Y(t), o |= (l & 127) << 14, l & 128 && (l = Y(t), o |= (l & 127) << 21, l & 128 && (l = Y(t), i = l & 127, l & 128 && (l = Y(t), i |= (l & 127) << 7, l & 128 && (l = Y(t), i |= (l & 127) << 14, l & 128 && (l = Y(t), i |= (l & 127) << 21, l & 128 && (l = Y(t), s = l & 127, l & 128 && (l = Y(t), s |= (l & 127) << 7))))))))), {
+        low: o | i << 28,
+        high: i >>> 4 | s << 24,
+        unsigned: e
+    }
+}
+
+function Fe(t, e) {
+    let o = e.low >>> 0,
+        i = (e.low >>> 28 | e.high << 4) >>> 0,
+        s = e.high >>> 24,
+        l = s === 0 ? i === 0 ? o < 16384 ? o < 128 ? 1 : 2 : o < 1 << 21 ? 3 : 4 : i < 16384 ? i < 128 ? 5 : 6 : i < 1 << 21 ? 7 : 8 : s < 128 ? 9 : 10,
+        c = Le(t, l),
+        a = t.bytes;
+    switch (l) {
+        case 10:
+            a[c + 9] = s >>> 7 & 1;
+        case 9:
+            a[c + 8] = l !== 9 ? s | 128 : s & 127;
+        case 8:
+            a[c + 7] = l !== 8 ? i >>> 21 | 128 : i >>> 21 & 127;
+        case 7:
+            a[c + 6] = l !== 7 ? i >>> 14 | 128 : i >>> 14 & 127;
+        case 6:
+            a[c + 5] = l !== 6 ? i >>> 7 | 128 : i >>> 7 & 127;
+        case 5:
+            a[c + 4] = l !== 5 ? i | 128 : i & 127;
+        case 4:
+            a[c + 3] = l !== 4 ? o >>> 21 | 128 : o >>> 21 & 127;
+        case 3:
+            a[c + 2] = l !== 3 ? o >>> 14 | 128 : o >>> 14 & 127;
+        case 2:
+            a[c + 1] = l !== 2 ? o >>> 7 | 128 : o >>> 7 & 127;
+        case 1:
+            a[c] = l !== 1 ? o | 128 : o & 127
+    }
+}
+const wl = (t, e) => {
+    const o = x();
+    let i = new ResizeObserver(s => {
+        const l = s[0].contentRect;
+        t.value.width = l.width * window.devicePixelRatio, t.value.height = l.height * window.devicePixelRatio
+    });
+    return ge(() => {
+        i.observe(t.value), e.canvas = t.value, o.value = new xl(e)
+    }), Ye(() => i.unobserve(t.value)), o
+};
+class xl {
+    constructor(e) {
+        W(this, "canvas");
+        W(this, "colors");
+        W(this, "ctx");
+        W(this, "isdraw");
+        W(this, "lines");
+        W(this, "textList");
+        W(this, "fontSize");
+        W(this, "font");
+        W(this, "rows");
+        W(this, "gap");
+        W(this, "speed");
+        W(this, "opacity");
+        W(this, "opacityStr");
+        this.isdraw = !1, this.textList = [], this.canvas = e.canvas, this.ctx = this.canvas.getContext("2d"), this.speed = e.speed || 2, this.setFont(e.fontSize || 16), this.setGap(e.gap || 8), this.setRows(e.rows || 4), this.setOpacity(e.opacity || 100), this.setColors(e.colors || ["FFFFFF", "#00FF80", "#00FFFF", "#FF00FF", "#8000FF", "#FF9933"]), this.resize()
+    }
+    resize() {
+        this.canvas.width = this.canvas.getBoundingClientRect().width * window.devicePixelRatio, this.canvas.height = this.canvas.getBoundingClientRect().height * window.devicePixelRatio, this.initRows()
+    }
+    setOpacity(e) {
+        this.opacity = e;
+        const o = Math.floor(2.55 * e).toString(16);
+        this.opacityStr = o.length == 1 ? "0" + o : o
+    }
+    setRows(e) {
+        this.rows = e
+    }
+    setSpeed(e) {
+        this.speed = e
+    }
+    setFont(e) {
+        this.ctx.textBaseline = "top", this.fontSize = e, this.font = `${e}px sans-serif`
+    }
+    setGap(e) {
+        this.gap = e
+    }
+    setColors(e) {
+        this.colors = e
+    }
+    clean() {
+        this.textList = [], this.isdraw = !1
+    }
+    destory() {
+        this.lines = [], this.clean()
+    }
+    add(e) {
+        const o = this.getLine();
+        if (o == -1) return;
+        const i = Math.ceil(this.ctx.measureText(e).width),
+            s = this.canvas.width + i;
+        this.lines[o].width = s, this.textList.push({
+            value: e,
+            width: i,
+            line: o,
+            left: this.canvas.width,
+            color: this.colors[Math.floor(Math.random() * this.colors.length)]
+        }), !this.isdraw && (this.isdraw = !0, this.draw())
+    }
+    getLine() {
+        let e = -1,
+            o = this.lines.length;
+        for (; ++e < o;)
+            if (this.lines[e].width == this.canvas.width) return e;
+        return -1
+    }
+    initRows() {
+        this.lines = [];
+        let e = -1;
+        const o = this.gap + this.fontSize;
+        for (; ++e < this.rows;) this.lines.push({
+            top: this.gap + o * e,
+            width: this.canvas.width
+        })
+    }
+    draw() {
+        this.ctx.textBaseline = "top", this.ctx.font = this.font, this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        let e = -1,
+            o = this.textList.length;
+        const i = [];
+        for (; ++e < o;) {
+            const s = this.textList[e],
+                l = s.left + s.width;
+            if (l <= 0) continue;
+            this.ctx.fillStyle = s.color + this.opacityStr;
+            const c = this.lines[s.line];
+            c && (this.ctx.fillText(s.value, s.left, this.lines[s.line].top), s.left -= this.speed, i.push(s), c.width = Math.max(l, this.canvas.width))
+        }
+        this.textList = i, i.length == 0 ? this.isdraw = !1 : requestAnimationFrame(this.draw.bind(this))
+    }
+}
+const kl = {
+        "w-full": "",
+        "h-full": "",
+        flex: "",
+        "flex-col": "",
+        "lg:flex-row": "",
+        "box-border": "",
+        "md:pb-2": ""
+    },
+    _l = {
+        "lg:grow-5": "",
+        flex: "",
+        "flex-col": ""
+    },
+    bl = {
+        flex: "",
+        "p-2": "",
+        "pt-1": "",
+        "gap-2": "",
+        "text-lg": "",
+        "md:pr-3": ""
+    },
+    Cl = {
+        "hover:text-amber": "",
+        grow: "",
+        "w-25": "",
+        "box-border": "",
+        "text-center": "",
+        truncate: "",
+        "text-4": "",
+        "md:text-5": "",
+        "pr-6": "",
+        "sm:pr-2": "",
+        "lg:pr-0": ""
+    },
+    Il = {
+        "aspect-ratio-video": ""
+    },
+    Sl = {
+        "w-full": "",
+        "h-full": "",
+        "pos-absolute": "",
+        "top-0": "",
+        "z-1": "",
+        flex: "",
+        "justify-center": "",
+        "items-center": "",
+        "text-6": ""
+    },
+    Al = ["src"],
+    Ml = n("div", {
+        grow: ""
+    }, null, -1),
+    Tl = {
+        key: 0
+    },
+    El = {
+        class: "flex items-center gap-4 p-1"
+    },
+    Ol = {
+        class: "flex items-center gap-4 p-1"
+    },
+    Rl = {
+        key: 1,
+        "h-0": "",
+        "w-0": ""
+    },
+    jl = {
+        grow: "",
+        "min-h-50": "",
+        "lg:grow-0": "",
+        "lg:w-80": "",
+        "xl:w-100": "",
+        flex: "",
+        "flex-col": "",
+        "lg:pr-0": "",
+        "pt-3": "",
+        "lg-pt-12": "",
+        "lg:ml-3": "",
+        "box-border": "",
+        "lg:b-l-solid": "",
+        b: "",
+        "lg:b-l-gray-7": "",
+        "lg:pl-3": ""
+    },
+    Ll = {
+        flex: "",
+        "items-center": "",
+        "line-height-none": "",
+        "gap-4": "",
+        b: "",
+        "b-y-solid": "",
+        "py-3": "",
+        "b-gray-7": "",
+        "px-4": ""
+    },
+    Ul = ["src"],
+    Vl = {
+        "grow-1": "",
+        "w-20": ""
+    },
+    Bl = {
+        "h-4": "",
+        truncate: ""
+    },
+    zl = {
+        "h-4": "",
+        flex: "",
+        "text-3": "",
+        "items-center": "",
+        "gap-1": ""
+    },
+    Pl = ["src"],
+    $l = n("div", {
+        "mx-1": "",
+        class: "i-mdi-fire"
+    }, null, -1),
+    Fl = {
+        "pos-absolute": "",
+        "top-0": "",
+        "right-4": "",
+        "text-4": "",
+        flex: "",
+        "flex-col": "",
+        "gap-3": ""
+    },
+    Dl = ["src"],
+    Nl = ["href"],
+    Gl = n("div", {
+        class: "i-ri-link"
+    }, null, -1),
+    Ql = [Gl],
+    Jl = ["data-id", "data-site", "href"],
+    Wl = {
+        "w-5": "",
+        "h-5": "",
+        "rounded-5": "",
+        alt: ""
+    },
+    Yl = n("div", {
+        "p-3": "",
+        "bg-sm": ""
+    }, "弹幕", -1),
+    ql = {
+        flex: "",
+        "flex-col": "",
+        b: "",
+        "b-solid": "",
+        "b-gray-6": "",
+        "rounded-2": "",
+        "px-2": ""
+    },
+    Hl = {
+        flex: "",
+        "justify-between": "",
+        "items-center": "",
+        "mx-2": "",
+        "py-2": ""
+    },
+    Zl = n("div", null, "文字大小", -1),
+    Kl = {
+        flex: "",
+        "justify-between": "",
+        "items-center": "",
+        b: "",
+        "b-t-gray-6": "",
+        "b-t-solid": "",
+        "mx-2": "",
+        "py-2": ""
+    },
+    Xl = n("div", null, "上下间隔", -1),
+    en = {
+        flex: "",
+        "justify-between": "",
+        "items-center": "",
+        "mx-2": "",
+        "py-2": ""
+    },
+    tn = n("div", null, "最大行数", -1),
+    on = {
+        flex: "",
+        "justify-between": "",
+        "items-center": "",
+        b: "",
+        "b-t-gray-6": "",
+        "b-t-solid": "",
+        "mx-2": "",
+        "py-2": ""
+    },
+    sn = n("div", null, "弹幕速度", -1),
+    ln = {
+        flex: "",
+        "justify-between": "",
+        "items-center": "",
+        b: "",
+        "b-t-gray-6": "",
+        "b-t-solid": "",
+        "mx-2": "",
+        "py-2": ""
+    },
+    nn = n("div", null, "弹幕透明", -1),
+    rn = {
+        flex: "",
+        "justify-between": "",
+        "items-center": "",
+        b: "",
+        "b-t-gray-6": "",
+        "b-t-solid": "",
+        "mx-2": "",
+        "py-2": ""
+    },
+    an = n("div", null, "彩色弹幕", -1),
+    cn = n("div", {
+        "p-3": "",
+        "bg-sm": ""
+    }, "聊天", -1),
+    un = {
+        flex: "",
+        "flex-col": "",
+        b: "",
+        "b-solid": "",
+        "b-gray-6": "",
+        "rounded-2": "",
+        "px-2": ""
+    },
+    dn = {
+        flex: "",
+        "justify-between": "",
+        "items-center": "",
+        "mx-2": "",
+        "py-2": ""
+    },
+    vn = n("div", null, "文字大小", -1),
+    fn = {
+        flex: "",
+        "justify-between": "",
+        "items-center": "",
+        b: "",
+        "b-t-gray-6": "",
+        "b-t-solid": "",
+        "mx-2": "",
+        "py-2": ""
+    },
+    pn = n("div", null, "上下间隔", -1),
+    mn = {
+        flex: "",
+        "justify-between": "",
+        "items-center": "",
+        b: "",
+        "b-t-gray-6": "",
+        "b-t-solid": "",
+        "mx-2": "",
+        "py-2": ""
+    },
+    hn = n("div", null, "自动清屏", -1),
+    gn = {
+        flex: "",
+        "justify-between": "",
+        "items-center": "",
+        b: "",
+        "b-t-gray-6": "",
+        "b-t-solid": "",
+        "mx-2": "",
+        "py-2": ""
+    },
+    yn = n("div", null, "彩色消息", -1),
+    wn = n("div", {
+        "p-3": "",
+        "bg-sm": ""
+    }, "颜色", -1),
+    xn = {
+        flex: "",
+        "flex-wrap": "",
+        shadow: "",
+        blur: "",
+        "bg-dark": "",
+        "p-2": "",
+        "box-border": "",
+        b: "",
+        "b-solid": "",
+        "b-gray-7": "",
+        style: {
+            "box-shadow": "0 6px 15px 0 rgba(0, 0, 0, .5)"
+        },
+        rounded: ""
+    },
+    kn = ["data-color"],
+    _n = {
+        "p-3": "",
+        "bg-sm": "",
+        flex: "",
+        "justify-between": "",
+        "items-center": ""
+    },
+    bn = J({
+        __name: "play",
+        setup(t) {
+            let e, o, i;
+            const s = re({
+                    follow: !1,
+                    type: 0,
+                    qn: 0,
+                    line: 0,
+                    notice: null,
+                    paused: !0,
+                    muted: !1,
+                    fullscreen: !1,
+                    webscreen: !1,
+                    showController: !0,
+                    showInfo: !0,
+                    pictureInPicture: !1
+                }),
+                l = ut(),
+                c = x(),
+                a = x(),
+                v = x(),
+                d = uo(),
+                p = U(() => {
+                    var f, u;
+                    return ((u = (f = d.value) == null ? void 0 : f.stream) == null ? void 0 : u.map(b => b.type.toUpperCase())) || []
+                }),
+                m = U(() => p.value.length > 0 ? d.value.stream[s.type].list.map(f => f.name) : []),
+                w = U(() => m.value.length > 0 ? d.value.stream[s.type].list[s.qn].lines.map(f => f.name) : []),
+                C = U(() => {
+                    var f;
+                    return (f = p.value[s.type]) == null ? void 0 : f.toLowerCase()
+                }),
+                I = U(() => w.value.length > 0 ? d.value.stream[s.type].list[s.qn].lines[s.line].url : ""),
+                j = U(() => T.map(f => Object.values(f.follows)).flat().sort(f => f.status ? -1 : 0));
+            H(I, () => {
+                var u, b;
+                if (!I.value) return;
+                const f = p.value[s.type].toLowerCase();
+                if (s[f]) {
+                    f == "flv" ? (u = s.flv) == null || u.switchURL(I.value, l.meta.site.id != "bilibili") : (b = s.hls) == null || b.loadSource(I.value);
+                    return
+                }
+                if (f == "flv" && (Pe != null && Pe.isSupported("video"))) {
+                    const _ = new Pe({
+                        media: a.value,
+                        seamlesslyReload: !0,
+                        isLive: !0,
+                        retryCount: 0
+                    });
+                    return _.load(I.value), s.flv = _
+                }
+                if (f == "hls" && ($e != null && $e.isSupported())) {
+                    const _ = new $e;
+                    return _.attachMedia(a.value), _.loadSource(I.value), s.hls = _
+                }
+                return s.notice = `不支持 ${f}`, clearTimeout(o)
+            }), H(C, () => {
+                var f, u;
+                if (C.value == "flv") {
+                    (f = s.hls) == null || f.destroy(), s.hls = void 0;
+                    return
+                }(u = s.flv) == null || u.destroy(), s.flv = void 0
+            });
+            const D = () => {
+                v.value.scrollTop = 0, be = 0, v.value.innerHTML = ""
+            };
+            let S, xe = 0,
+                te = !0;
+            const mt = x(),
+                le = wl(mt, {
+                    gap: h.canvasGap,
+                    rows: h.canvasRows,
+                    speed: h.canvasSpeed,
+                    opacity: h.canvasOpacity,
+                    colors: h.canvasColorOpen ? h.colors : ["#ffffff"]
+                }),
+                ke = [];
+            let _e;
+
+            function Dt() {
+                _e || (_e = setTimeout(() => {
+                    let f = -1;
+                    const u = ke.length > 5 ? 5 : ke.length;
+                    for (v.value.style.display = "none"; ++f < u;) v.value.appendChild(ke[f]);
+                    v.value.style.display = "block", ke.splice(0, 5), te && (v.value.scrollTop = v.value.scrollHeight), _e = void 0
+                }, 200))
+            }
+            const P = (f, u) => {
+                var fe;
+                if (xe++, h.blockOpen && Mt.value.length && Mt.value.some(ae => ae.test(u)) || (xe % (h.sideClean || 100) == 0 && (v.value.innerHTML = "", be = 0), h.canvasOpen && ((fe = le.value) == null || fe.add(u)), !s.showInfo || !h.sideOpen)) return;
+                const b = document.createElement("div"),
+                    {
+                        sideColorOpen: _,
+                        sideFontsize: E,
+                        sideGap: $,
+                        colors: X
+                    } = h;
+                b.style.margin = `${$}px 0`, b.style.fontSize = `${E}px`, _ && (b.style.color = X[Math.floor(Math.random() * X.length)]);
+                const ne = document.createElement("span");
+                ne.style.opacity = "0.5", ne.appendChild(document.createTextNode(f));
+                const ie = document.createElement("span");
+                ie.appendChild(document.createTextNode(u)), b.appendChild(ne), b.appendChild(ie), ke.push(b), Dt()
+            };
+            let be = 0;
+            const Ce = () => {
+                    if (v.value.scrollTop >= be) return be = v.value.scrollTop;
+                    be = v.value.scrollTop, te = !1, v.value.removeEventListener("scroll", Ce)
+                },
+                Nt = () => {
+                    te = !0, v.value.scrollTop = v.value.scrollHeight, v.value.addEventListener("scroll", Ce, {
+                        passive: !1
+                    })
+                };
+            let oe;
+            const ht = () => {
+                    var u, b;
+                    if (!d.value || S || !h.canvasOpen && !h.sideOpen) return;
+                    let f = !0;
+                    if (d.value.siteId == "huya") {
+                        const _ = (u = d.value) == null ? void 0 : u.ws;
+                        if (!_) return;
+                        S = new WebSocket(_), S.onopen = () => {
+                            clearInterval(oe), P("系统", "开始连接弹幕服务器"), v.value.addEventListener("scroll", Ce), S == null || S.send(JSON.stringify({
+                                command: "subscribeNotice",
+                                data: ["getMessageNotice"],
+                                reqId: Date.now().toString()
+                            })), oe = setInterval(() => {
+                                S.send("ping")
+                            }, 45e3)
+                        }, S.onmessage = E => {
+                            if (f) return P("系统", "弹幕服务器连接成功"), f = !1;
+                            const {
+                                sendNick: $,
+                                content: X
+                            } = JSON.parse(E.data).data;
+                            P($, X)
+                        }, S.onerror = () => {
+                            clearInterval(oe), P("系统", "弹幕服务器连接失败")
+                        }
+                    } else if (d.value.siteId == "douyu") S = new WebSocket("wss://danmuproxy.douyu.com:8506"), S.onopen = () => {
+                        var _, E;
+                        clearInterval(oe), P("系统", "开始连接弹幕服务器"), v.value.addEventListener("scroll", Ce), S.send(Ue(`type@=loginreq/roomid@=${(_=d.value)==null?void 0:_.roomId}`)), S.send(Ue(`type@=joingroup/rid@=${(E=d.value)==null?void 0:E.roomId}/gid@=-9999`)), oe = setInterval(() => {
+                            S.send(Ue("type@=mrkl/"))
+                        }, 45e3)
+                    }, S.onmessage = async({
+                        data: _
+                    }) => {
+                        f && (P("系统", "弹幕服务器连接成功"), f = !1), (await _.text()).split(/type@=chatmsg\//).forEach(X => {
+                            const ne = X.match(/nn@=(.*)\/txt@=(.*)\/cid/);
+                            ne != null && P(ne[1], ne[2])
+                        })
+                    }, S.onerror = () => {
+                        clearInterval(oe), P("系统", "弹幕服务器连接失败")
+                    };
+                    else if (d.value.siteId == "douyin") {
+                        const _ = (b = d.value) == null ? void 0 : b.ws;
+                        if (!_) return;
+                        S = new WebSocket(_), S.binaryType = "arraybuffer", S.onopen = () => {
+                            clearInterval(oe), P("系统", "开始连接弹幕服务器"), v.value.addEventListener("scroll", Ce), oe = setInterval(() => {
+                                (S == null ? void 0 : S.readyState) == 1 && S.send(rl({
+                                    payloadType: "bh"
+                                }))
+                            }, 1e4)
+                        }, S.onmessage = E => {
+                            f && (P("系统", "弹幕服务器连接成功"), f = !1);
+                            const $ = cl(new Uint8Array(E.data)),
+                                X = el($.payload),
+                                ie = tl(new Uint8Array(X)).messagesList;
+                            if (!ie || ie.length == 0) return;
+                            const fe = ie.length;
+                            let ae = -1;
+                            for (; ++ae < fe;) {
+                                if (ie[ae].method != "WebcastChatMessage") continue;
+                                const Se = ll(ie[ae].payload);
+                                P(Se.user.nickName, Se.content)
+                            }
+                        }, S.onerror = () => {
+                            clearInterval(oe), P("系统", "弹幕服务器连接失败"), P("系统", "请允许第三方cookie 连接抖音弹幕必须")
+                        }
+                    }
+                },
+                gt = new TextEncoder;
+
+            function Ue(f) {
+                let u = gt.encode(f);
+                const b = 9 + u.byteLength,
+                    _ = [b, 0, 0, .1, b, 0, 0, 0, 177, 2, 0, 0];
+                u = gt.encode(f + "\0");
+                const E = new Uint8Array(12 + u.byteLength);
+                return E.set(_), E.set(u, 12), E.buffer
+            }
+            const Ke = () => {
+                clearInterval(oe), S && (S.onmessage = null, kt == "douyu" ? S.send(Ue("type@=logout")) : S.close(), S = null, xe = 0, v.value && Ve == l.fullPath && P("系统", "弹幕服务器断开连接"))
+            };
+            H(d, () => ht()), H([() => h.sideOpen, () => h.canvasOpen], () => {
+                !h.sideOpen && !h.canvasOpen && Ke(), S || ht()
+            });
+            const Xe = () => {
+                    const {
+                        site: f,
+                        id: u
+                    } = l.meta, b = l.meta.site.follows[u];
+                    b && (d.value = b, s.follow = !0), clearInterval(oe), clearTimeout(o), s.notice = "加载中...", ot(() => {
+                        P("系统", "开始获取直播间信息")
+                    }), se(f.id, "getRoomDetail", {
+                        id: u
+                    }).then(_ => {
+                        if (d.value = _, s.follow && Ge(_), ot(() => P("系统", "直播间信息获取成功")), !_.status) return s.notice = "未开播！"
+                    }, _ => {
+                        s.notice = _, ot(() => P("系统", "直播间信息获取失败"))
+                    }).finally(() => clearTimeout(o))
+                },
+                Gt = () => {
+                    if (!d.value) return;
+                    const {
+                        id: f
+                    } = l.meta.site;
+                    s.follow = s.follow ? ko(f, d.value.roomId) : Ge(d.value)
+                },
+                et = () => {
+                    !d.value || !d.value.status || (clearTimeout(e), e = setTimeout(() => {
+                        s.paused ? a.value.play() : a.value.pause()
+                    }, 200))
+                },
+                yt = () => {
+                    clearTimeout(e), s.fullscreen = !s.fullscreen, document.fullscreenElement ? document.exitFullscreen() : c.value.requestFullscreen()
+                },
+                ve = () => {
+                    clearTimeout(i), s.showController = !0, i = setTimeout(() => {
+                        var f, u;
+                        (f = a.value) != null && f.paused || !((u = a.value) != null && u.played.length) || (s.showController = !1)
+                    }, 3e3)
+                },
+                Qt = () => {
+                    clearTimeout(e), s.webscreen = !s.webscreen, s.fullscreen && (s.fullscreen = !1, document.exitFullscreen())
+                },
+                Jt = () => s.showInfo = !s.showInfo,
+                Wt = () => {
+                    s.paused = !1, ve()
+                },
+                Yt = () => {
+                    s.paused = !0, ve()
+                },
+                wt = f => {
+                    if (I.value) switch (f.code) {
+                        case "ArrowDown":
+                            return ze(!1);
+                        case "ArrowUp":
+                            return ze(!0);
+                        case "Space":
+                            return et()
+                    }
+                },
+                qt = () => {
+                    var f;
+                    clearTimeout(e), clearTimeout(i), clearTimeout(o), clearTimeout(_e), Ke(), document.removeEventListener("keydown", wt), C.value && !s.pictureInPicture && ((f = s[C.value]) == null || f.destroy())
+                };
+            Xe();
+            const xt = He();
+            let Ve = l.fullPath;
+            ge(() => {
+                c.value.style.filter = N.value == 100 ? "" : `brightness(${N.value/100})`, a.value.volume = Z.value / 100, s.muted = a.value.muted, a.value.addEventListener("canplay", () => {
+                    s.notice = null
+                }), Ne || (c.value.addEventListener("mousemove", ve), document.addEventListener("keydown", wt)), document.pictureInPictureElement && document.exitPictureInPicture(), a.value.addEventListener("leavepictureinpicture", () => {
+                    var f;
+                    if (!/play/.test(l.path)) return xt.push(Ve);
+                    if (l.fullPath == Ve) return s.pictureInPicture = !1;
+                    (f = s[C.value]) == null || f.destroy()
+                })
+            });
+            let kt = l.meta.site.id;
+            So(f => {
+                var E;
+                const {
+                    siteid: u,
+                    id: b
+                } = f.params, _ = he.findIndex($ => $ == u);
+                return _ == -1 ? {
+                    name: "404"
+                } : (f.meta.site = T[_], f.meta.id = b, C.value && ((E = s[C.value]) == null || E.destroy(), s[C.value] = void 0), s.type = 0, s.qn = 0, s.line = 0, s.follow = !1, d.value = void 0, !0)
+            }), H(() => l.params, () => {
+                var f;
+                clearTimeout(_e), Ke(), D(), (f = le.value) == null || f.destory(), kt = l.meta.site.id, Ve = l.fullPath, Xe()
+            }), Ye(qt);
+            const Ht = () => Promise.all(Je(T, nt)),
+                Zt = async f => {
+                    f == 1 && await Ht()
+                },
+                Kt = () => s.showController ? et() : ve(),
+                Xt = () => {
+                    s.pictureInPicture = !s.pictureInPicture, document.pictureInPictureElement ? document.exitPictureInPicture() : a.value.requestPictureInPicture()
+                },
+                eo = f => {
+                    const u = f.target.dataset.color;
+                    if (!u) return;
+                    const b = h.colors.findIndex(_ => _ == u);
+                    if (b == -1) return h.colors.push(u);
+                    h.colors.length != 1 && h.colors.splice(b, 1)
+                };
+            H(() => h.colors, () => {
+                var f;
+                return (f = le.value) == null ? void 0 : f.setColors(h.colors)
+            }), H(() => h.canvasSpeed, () => {
+                var f;
+                return (f = le.value) == null ? void 0 : f.setSpeed(h.canvasSpeed)
+            }), H(() => h.canvasOpacity, () => {
+                var f;
+                return (f = le.value) == null ? void 0 : f.setOpacity(h.canvasOpacity)
+            }), H(() => h.canvasColorOpen, () => {
+                var f;
+                return (f = le.value) == null ? void 0 : f.setColors(h.canvasColorOpen ? h.colors : ["#ffffff"])
+            }), it(() => {
+                var f, u, b, _;
+                (f = le.value) == null || f.setGap(h.canvasGap), (u = le.value) == null || u.setFont(h.canvasFontsize), (b = le.value) == null || b.setRows(h.canvasRows), (_ = le.value) == null || _.resize()
+            }), H(Z, () => {
+                ve(), clearTimeout(o), s.notice = `当前音量 ${Z.value}%`, a.value.volume = Z.value / 100, Qe("volume", Z.value), o = setTimeout(() => s.notice = null, 2e3)
+            }), H(N, () => {
+                ve(), clearTimeout(o), s.notice = `当前亮度 ${N.value}%`, c.value.style.filter = N.value == 100 ? "" : `brightness(${N.value/100})`, Qe("brightness", N.value), o = setTimeout(() => s.notice = null, 2e3)
+            });
+            let tt;
+            const Be = x(),
+                to = f => {
+                    clearTimeout(tt), tt = setTimeout(() => {
+                        const u = Ie("id", f.target, Be.value);
+                        if (!u) return;
+                        const b = Ie("site", f.target, Be.value);
+                        xt.push(`/${b}/play/${u}`)
+                    }, 300)
+                },
+                oo = f => {
+                    var E;
+                    clearTimeout(tt);
+                    const u = Ie("id", f.target, Be.value);
+                    if (!u) return;
+                    const _ = `/${Ie("site",f.target,Be.value)}/play/${u}`;
+                    (E = window.open(_, "_blank")) == null || E.location
+                },
+                Ie = (f, u, b) => {
+                    if (u == b) return null;
+                    const _ = u.dataset[f];
+                    return _ || Ie(f, u.parentElement, b)
+                },
+                so = () => N.value = 100;
+            H(() => s.muted, () => {
+                ve(), clearTimeout(o), s.notice = s.muted ? "已静音" : "已开启声音", o = setTimeout(() => s.notice = null, 2e3)
+            });
+            const lo = () => {
+                if (a.value.muted) {
+                    a.value.muted = !1, s.muted = !1;
+                    return
+                }
+                a.value.muted = !0, s.muted = !0
+            };
+            return (f, u) => {
+                var fe, ae, Se, _t, bt;
+                const b = Xs,
+                    _ = Ys,
+                    E = je,
+                    $ = Qs,
+                    X = Ns,
+                    ne = Re,
+                    ie = at("lazy");
+                return g(), k("div", kl, [n("div", _l, [n("div", bl, [n("div", {
+                    "hover:text-amber": "",
+                    onClick: u[0] || (u[0] = (...y) => f.$router.back && f.$router.back(...y)),
+                    class: "i-ri-arrow-left-line"
+                }), n("div", Cl, M((fe = r(d)) == null ? void 0 : fe.title), 1), n("div", {
+                    onClick: Jt,
+                    hidden: "",
+                    "lg:block": "",
+                    style: me(r(s).showInfo ? "transform:rotate(180deg)" : "margin-right:1.5rem"),
+                    class: "i-ri-arrow-right-s-fill"
+                }, null, 4)]), n("div", {
+                    ref_key: "player",
+                    ref: c,
+                    "md:rounded-6px": "",
+                    "text-4": "",
+                    "text-white": "",
+                    onContextmenu: u[19] || (u[19] = F(() => {}, ["prevent"])),
+                    "bg-black": "",
+                    "cursor-default": "",
+                    class: O({
+                        "cursor-none": !r(s).showController,
+                        "text-5": r(s).fullscreen,
+                        "text-5 !pos-fixed left-0 right-0 top-0 bottom-0 z-10 ": r(s).webscreen
+                    }),
+                    "pos-relative": "",
+                    "w-full": "",
+                    "overflow-hidden": "",
+                    "select-none": "",
+                    "h-full": "",
+                    onClick: Kt,
+                    onDblclick: yt
+                }, [n("div", Il, [n("video", {
+                    playsinline: "",
+                    "webkit-playsinline": "",
+                    "x5-video-player-type": "h5",
+                    autoplay: "",
+                    ref_key: "video",
+                    ref: a,
+                    "w-full": "",
+                    "h-full": "",
+                    "pos-absolute": "",
+                    onPlay: Wt,
+                    onPause: Yt
+                }, null, 544)]), R(n("div", Sl, [n("span", null, M(r(s).notice), 1)], 512), [
+                    [G, r(s).notice]
+                ]), n("canvas", {
+                    ref_key: "canvas",
+                    ref: mt,
+                    "pos-absolute": "",
+                    "top-0": "",
+                    width: "0",
+                    height: "0",
+                    "w-full": "",
+                    "h-full": "",
+                    "z-1": ""
+                }, null, 512), R(n("div", {
+                    "pos-absolute": "",
+                    "bottom-0": "",
+                    "left-0": "",
+                    "right-0": "",
+                    "px-4": "",
+                    "py-2": "",
+                    "gap-3": "",
+                    "z-20": "",
+                    flex: "",
+                    "items-center": "",
+                    onClick: u[5] || (u[5] = F(() => {}, ["stop"])),
+                    onDblclick: u[6] || (u[6] = F(() => {}, ["stop"])),
+                    class: O({
+                        "py-3": r(s).fullscreen || r(s).webscreen
+                    }),
+                    "bg-black": "",
+                    "bg-op-30": ""
+                }, [n("div", {
+                    onClick: et,
+                    "hover:text-amber": "",
+                    class: O(r(s).paused ? "i-ri-play-large-fill" : "i-ri-pause-large-fill")
+                }, null, 2), n("div", {
+                    "hover:text-amber": "",
+                    onClick: Gt,
+                    class: O(r(s).follow ? "i-ri-heart-fill" : "i-ri-heart-line")
+                }, null, 2), n("div", {
+                    "hover:text-amber": "",
+                    onClick: Xe,
+                    class: "i-ri-refresh-line"
+                }), n("img", {
+                    "w-1.5em": "",
+                    "cursor-pointer": "",
+                    onClick: u[1] || (u[1] = () => r(h).canvasOpen = !r(h).canvasOpen),
+                    src: r(h).canvasOpen ? r(Tt) : r(Et)
+                }, null, 8, Al), Ml, r(p).length ? (g(), k("div", Tl, [A(b, {
+                    active: r(s).type,
+                    "onUpdate:active": u[2] || (u[2] = y => r(s).type = y),
+                    list: r(p)
+                }, null, 8, ["active", "list"]), A(b, {
+                    active: r(s).qn,
+                    "onUpdate:active": u[3] || (u[3] = y => r(s).qn = y),
+                    list: r(m)
+                }, null, 8, ["active", "list"]), A(b, {
+                    active: r(s).line,
+                    "onUpdate:active": u[4] || (u[4] = y => r(s).line = y),
+                    list: r(w)
+                }, null, 8, ["active", "list"]), r(Ne) ? ue("", !0) : (g(), k("div", {
+                    key: 0,
+                    "ml-2": "",
+                    "hover:text-amber": "",
+                    onClick: Xt,
+                    class: O(r(s).pictureInPicture ? "i-ri-picture-in-picture-exit-line" : "i-ri-picture-in-picture-2-line")
+                }, null, 2))])) : ue("", !0), n("div", {
+                    "hover:text-amber": "",
+                    onClick: Qt,
+                    class: "i-mdi-fit-to-screen"
+                }), n("div", {
+                    "hover:text-amber": "",
+                    onClick: yt,
+                    class: O(r(s).fullscreen ? "i-ri-fullscreen-exit-fill" : "i-ri-fullscreen-fill")
+                }, null, 2)], 34), [
+                    [G, r(s).showController]
+                ]), r(Ne) ? R((g(), k("div", {
+                    key: 0,
+                    class: O({
+                        "py-3": r(s).fullscreen || r(s).webscreen
+                    }),
+                    "pos-absolute": "",
+                    "top-0": "",
+                    "left-0": "",
+                    "right-0": "",
+                    "px-4": "",
+                    "py-2": "",
+                    "gap-3": "",
+                    "z-20": "",
+                    flex: "",
+                    "justify-between": "",
+                    "bg-black": "",
+                    "bg-op-30": "",
+                    onClick: u[11] || (u[11] = F(() => {}, ["stop"])),
+                    onDblclick: u[12] || (u[12] = F(() => {}, ["stop"]))
+                }, [n("div", El, [n("div", {
+                    onClick: u[7] || (u[7] = y => r(St)(!1)),
+                    class: "i-ri-sun-line"
+                }), n("div", null, M(r(N)), 1), n("div", {
+                    onClick: u[8] || (u[8] = y => r(St)(!0)),
+                    class: "i-ri-sun-fill"
+                })]), R(n("div", {
+                    "flex-1": "",
+                    "w-10": "",
+                    truncate: "",
+                    "text-center": ""
+                }, M((ae = r(d)) == null ? void 0 : ae.title), 513), [
+                    [G, r(s).fullscreen]
+                ]), n("div", Ol, [n("div", {
+                    onClick: u[9] || (u[9] = y => r(ze)(!1)),
+                    class: "i-ri-volume-down-fill"
+                }), n("div", null, M(r(Z)), 1), n("div", {
+                    onClick: u[10] || (u[10] = y => r(ze)(!0)),
+                    class: "i-ri-volume-up-fill"
+                })])], 34)), [
+                    [G, r(s).showController]
+                ]) : R((g(), k("div", Rl, [n("div", {
+                    onClick: u[14] || (u[14] = F(() => {}, ["stop"])),
+                    onDblclick: u[15] || (u[15] = F(() => {}, ["stop"])),
+                    "pos-absolute": "",
+                    class: "top-50% left-4 flex items-center flex-col",
+                    style: {
+                        transform: "translateY(-50%)"
+                    },
+                    "z-20": ""
+                }, [n("div", null, M(r(N)), 1), A(_, {
+                    value: r(N),
+                    "onUpdate:value": u[13] || (u[13] = y => pe(N) ? N.value = y : null),
+                    max: 200,
+                    min: 50
+                }, null, 8, ["value"]), n("div", {
+                    onClick: F(so, ["stop"]),
+                    class: "i-ri-sun-line"
+                })], 32), n("div", {
+                    onClick: u[17] || (u[17] = F(() => {}, ["stop"])),
+                    onDblclick: u[18] || (u[18] = F(() => {}, ["stop"])),
+                    "pos-absolute": "",
+                    class: "top-50% right-4 flex items-center flex-col",
+                    style: {
+                        transform: "translateY(-50%)"
+                    },
+                    "z-20": ""
+                }, [De(M(r(Z)) + " ", 1), A(_, {
+                    value: r(Z),
+                    "onUpdate:value": u[16] || (u[16] = y => pe(Z) ? Z.value = y : null),
+                    max: 100,
+                    min: 0
+                }, null, 8, ["value"]), n("div", {
+                    onClick: F(lo, ["stop"]),
+                    class: O(r(s).muted ? "i-ri-volume-mute-line" : "i-ri-volume-down-line")
+                }, null, 2)], 32)], 512)), [
+                    [G, r(s).showController]
+                ])], 34)]), R(n("div", jl, [n("div", Ll, [n("img", {
+                    src: (Se = r(d)) == null ? void 0 : Se.avatar,
+                    "w-8": "",
+                    "h-8": "",
+                    alt: "",
+                    "rounded-4": ""
+                }, null, 8, Ul), n("div", Vl, [n("div", Bl, M((_t = r(d)) == null ? void 0 : _t.nickname), 1), n("div", zl, [n("img", {
+                    "w-4": "",
+                    "h-4": "",
+                    src: f.$route.meta.site.icon
+                }, null, 8, Pl), De(" " + M(f.$route.meta.site.name), 1)])]), n("div", null, [$l, n("span", null, M((bt = r(d)) == null ? void 0 : bt.online), 1)])]), A(ne, {
+                    grow: !0,
+                    onTabClick: Zt,
+                    class: "!h-[calc(100%-3.75rem)]"
+                }, {
+                    default: V(() => [A(E, {
+                        title: "聊天",
+                        "pos-relative": ""
+                    }, {
+                        default: V(() => {
+                            var y;
+                            return [n("div", Fl, [n("img", {
+                                "w-1.5em": "",
+                                "cursor-pointer": "",
+                                onClick: u[20] || (u[20] = () => r(h).sideOpen = !r(h).sideOpen),
+                                src: r(h).sideOpen ? r(Tt) : r(Et)
+                            }, null, 8, Dl), n("div", {
+                                "text-green-5": "",
+                                onClick: D,
+                                class: "i-ri-delete-bin-3-line"
+                            }), n("a", {
+                                "text-green-5": "",
+                                href: (y = r(d)) == null ? void 0 : y.url,
+                                target: "_blank"
+                            }, Ql, 8, Nl), n("div", {
+                                onClick: Nt,
+                                "text-green-5": "",
+                                class: "i-ri-arrow-down-circle-line"
+                            })]), n("div", {
+                                ref_key: "dm",
+                                ref: v,
+                                "h-full": "",
+                                "pl-2": "",
+                                "box-border": "",
+                                class: "scrolly"
+                            }, null, 512)]
+                        }),
+                        _: 1
+                    }), A(E, {
+                        title: "关注",
+                        "box-border": "",
+                        "px-4": ""
+                    }, {
+                        default: V(() => [n("div", {
+                            onClick: F(to, ["prevent"]),
+                            onDblclick: F(oo, ["prevent"])
+                        }, [(g(!0), k(Q, null, ee(r(j), y => {
+                            var Ct, It;
+                            return g(), k("a", {
+                                "data-id": y.roomId,
+                                "data-site": y.siteId,
+                                class: O({
+                                    "text-amber": ((Ct = r(d)) == null ? void 0 : Ct.siteId) == y.siteId && ((It = r(d)) == null ? void 0 : It.roomId) == y.roomId
+                                }),
+                                key: `${y.siteId}/${y.roomId}`,
+                                href: `/${y.siteId}/play/${y.roomId}`,
+                                flex: "",
+                                "items-center": "",
+                                "gap-2": "",
+                                "py-2": ""
+                            }, [R(n("img", Wl, null, 512), [
+                                [ie, y.avatar]
+                            ]), n("div", null, M(y.nickname), 1), n("div", {
+                                "w-3": "",
+                                "h-3": "",
+                                "rounded-3": "",
+                                class: O([y.status ? "bg-green" : "bg-red"])
+                            }, null, 2), n("div", null, M(y.status ? "直播中" : "未开播"), 1)], 10, Jl)
+                        }), 128))], 32)]),
+                        _: 1
+                    }), A(E, {
+                        title: "设置",
+                        "px-2": ""
+                    }, {
+                        default: V(() => [Yl, n("div", ql, [n("div", Hl, [Zl, A($, {
+                            value: r(h).canvasFontsize,
+                            "onUpdate:value": u[21] || (u[21] = y => r(h).canvasFontsize = y),
+                            max: 80,
+                            min: 8,
+                            step: 1
+                        }, null, 8, ["value"])]), n("div", Kl, [Xl, A($, {
+                            value: r(h).canvasGap,
+                            "onUpdate:value": u[22] || (u[22] = y => r(h).canvasGap = y),
+                            max: 80,
+                            min: 1,
+                            step: 1
+                        }, null, 8, ["value"])]), n("div", en, [tn, A($, {
+                            value: r(h).canvasRows,
+                            "onUpdate:value": u[23] || (u[23] = y => r(h).canvasRows = y),
+                            max: 50,
+                            min: 1,
+                            step: 1
+                        }, null, 8, ["value"])]), n("div", on, [sn, A($, {
+                            value: r(h).canvasSpeed,
+                            "onUpdate:value": u[24] || (u[24] = y => r(h).canvasSpeed = y),
+                            max: 32,
+                            min: .5,
+                            step: .5
+                        }, null, 8, ["value"])]), n("div", ln, [nn, A($, {
+                            value: r(h).canvasOpacity,
+                            "onUpdate:value": u[25] || (u[25] = y => r(h).canvasOpacity = y),
+                            max: 100,
+                            min: 10,
+                            step: 10
+                        }, null, 8, ["value"])]), n("div", rn, [an, A(X, {
+                            value: r(h).canvasColorOpen,
+                            "onUpdate:value": u[26] || (u[26] = y => r(h).canvasColorOpen = y)
+                        }, null, 8, ["value"])])]), cn, n("div", un, [n("div", dn, [vn, A($, {
+                            value: r(h).sideFontsize,
+                            "onUpdate:value": u[27] || (u[27] = y => r(h).sideFontsize = y),
+                            max: 80,
+                            min: 8,
+                            step: 1
+                        }, null, 8, ["value"])]), n("div", fn, [pn, A($, {
+                            value: r(h).sideGap,
+                            "onUpdate:value": u[28] || (u[28] = y => r(h).sideGap = y),
+                            max: 80,
+                            min: 0,
+                            step: 1
+                        }, null, 8, ["value"])]), n("div", mn, [hn, A($, {
+                            value: r(h).sideClean,
+                            "onUpdate:value": u[29] || (u[29] = y => r(h).sideClean = y),
+                            max: 500,
+                            min: 10,
+                            step: 10
+                        }, null, 8, ["value"])]), n("div", gn, [yn, A(X, {
+                            value: r(h).sideColorOpen,
+                            "onUpdate:value": u[30] || (u[30] = y => r(h).sideColorOpen = y)
+                        }, null, 8, ["value"])])]), wn, n("div", xn, [(g(!0), k(Q, null, ee(r(bo), y => (g(), k("div", {
+                            onClick: eo
+                        }, [n("div", {
+                            class: "w-4 h-4 rounded-2 m-2 shadow",
+                            "box-border": "",
+                            "data-color": y,
+                            "cursor-pointer": "",
+                            style: me(`background:${y};${r(h).colors.includes(y)?"box-shadow:0 0 0px 2px white":""}`)
+                        }, null, 12, kn)]))), 256))]), n("div", _n, [De("屏蔽 "), A(X, {
+                            value: r(h).blockOpen,
+                            "onUpdate:value": u[31] || (u[31] = y => r(h).blockOpen = y)
+                        }, null, 8, ["value"])]), R(n("textarea", {
+                            "outline-none": "",
+                            "w-full": "",
+                            "onUpdate:modelValue": u[32] || (u[32] = y => r(h).blockWords = y),
+                            "text-white": "",
+                            b: "",
+                            "b-solid": "",
+                            "b-gray-7": "",
+                            "p-2": "",
+                            "box-border": "",
+                            rows: "5",
+                            "bg-dark": "",
+                            shadow: "",
+                            "rounded-1": "",
+                            placeholder: "以空格分隔"
+                        }, null, 512), [
+                            [rt, r(h).blockWords, void 0, {
+                                trim: !0
+                            }]
+                        ])]),
+                        _: 1
+                    })]),
+                    _: 1
+                })], 512), [
+                    [G, r(s).showInfo]
+                ])])
+            }
+        }
+    }),
+    $t = (t, e) => {
+        const o = t.__vccOpts || t;
+        for (const [i, s] of e) o[i] = s;
+        return o
+    },
+    Cn = {},
+    In = {
+        "h-full": "",
+        "box-border": "",
+        "py-2": "",
+        class: "scrolly"
+    },
+    Sn = n("div", {
+        "text-lg": "",
+        "p-2": ""
+    }, "开源 ", -1),
+    An = n("div", {
+        "ml-4": ""
+    }, [n("a", {
+        "text-blue": "",
+        target: "_blank",
+        href: "https://github.com/lemonfog/lemon-live"
+    }, "https://github.com/lemonfog/lemon-live")], -1),
+    Mn = n("div", {
+        "text-lg": "",
+        "p-2": ""
+    }, "声明", -1),
+    Tn = n("div", {
+        "ml-4": ""
+    }, [n("div", null, "本项目的所有功能都是基于互联网上公开的资料开发，无任何破解、逆向工程等行为。"), n("div", null, "本项目仅用于学习交流编程技术，严禁将本项目用于商业目的。如有任何商业行为，均与本项目无关。"), n("div", null, "如果本项目存在侵犯您的合法权益的情况，请及时与开发者联系，开发者将会及时删除有关内容。")], -1),
+    En = n("div", {
+        "text-lg": "",
+        "p-2": ""
+    }, "捐赠", -1),
+    On = n("div", {
+        "ml-4": ""
+    }, [n("img", {
+        "h-50": "",
+        "mr-5": "",
+        src: "https://i0.hdslb.com/bfs/article/828b4686d0bcd7a427939b1f121f322898845873.png@1e_1c.webp"
+    }), n("img", {
+        "h-50": "",
+        src: "https://i0.hdslb.com/bfs/article/d07b5e8cbae76f0fc38a8049c433d3d598845873.jpg@1e_1c.webp"
+    })], -1),
+    Rn = [Sn, An, Mn, Tn, En, On];
+
+function jn(t, e) {
+    return g(), k("div", In, Rn)
+}
+const Ln = $t(Cn, [
+        ["render", jn]
+    ]),
+    Un = {},
+    Vn = {
+        "h-full": "",
+        flex: "",
+        "justify-center": "",
+        "items-center": ""
+    },
+    Bn = n("div", {
+        "text-center": "",
+        "text-8": "",
+        "line-height-8": ""
+    }, [n("div", {
+        "font-900": ""
+    }, "404"), n("div", {
+        "mt-4": ""
+    }, "页面未找到")], -1),
+    zn = [Bn];
+
+function Pn(t, e) {
+    return g(), k("div", Vn, zn)
+}
+const $n = $t(Un, [
+    ["render", Pn]
+]);
+async
+function Me(t) {
+    const {
+        siteid: e,
+        id: o
+    } = t.params, i = T.findIndex(s => s.id == e);
+    return i == -1 ? {
+        name: "404"
+    } : (t.meta.site = T[i], t.meta.id = o, t.meta.index = i, L.value = i, !0)
+}
+const Fn = Co({
+        history: Io(),
+        routes: [{
+            path: "/",
+            redirect: () => `/${he[L.value]}`
+        }, {
+            path: "/follow",
+            component: zs
+        }, {
+            path: "/user",
+            component: Ln
+        }, {
+            path: "/category",
+            redirect: () => `/${he[L.value]}/category`
+        }, {
+            path: "/search",
+            redirect: () => `/${he[L.value]}/search`
+        }, {
+            path: "/:siteid",
+            component: Ds,
+            beforeEnter: Me
+        }, {
+            path: "/:siteid/category",
+            component: ps,
+            beforeEnter: Me
+        }, {
+            path: "/:siteid/category/:id",
+            component: es,
+            beforeEnter: Me
+        }, {
+            path: "/:siteid/play/:id",
+            component: bn,
+            beforeEnter: Me
+        }, {
+            path: "/:siteid/search",
+            component: xs,
+            beforeEnter: Me
+        }, {
+            path: "/:pathMatch(.*)*",
+            name: "404",
+            component: $n
+        }]
+    }),
+    Dn = {
+        install(t) {
+            t.directive("lazy", {
+                mounted(e, o) {
+                    e.src = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxZW0iIGhlaWdodD0iMWVtIiB2aWV3Qm94PSIwIDAgMjQgMjQiPjxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iY3VycmVudENvbG9yIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iMS41IiBkPSJtMi4yNSAxNS43NWw1LjE1OS01LjE1OWEyLjI1IDIuMjUgMCAwIDEgMy4xODIgMGw1LjE1OSA1LjE1OW0tMS41LTEuNWwxLjQwOS0xLjQwOWEyLjI1IDIuMjUgMCAwIDEgMy4xODIgMGwyLjkwOSAyLjkwOW0tMTggMy43NWgxNi41YTEuNSAxLjUgMCAwIDAgMS41LTEuNVY2YTEuNSAxLjUgMCAwIDAtMS41LTEuNUgzLjc1QTEuNSAxLjUgMCAwIDAgMi4yNSA2djEyYTEuNSAxLjUgMCAwIDAgMS41IDEuNW0xMC41LTExLjI1aC4wMDh2LjAwOGgtLjAwOHptLjM3NSAwYS4zNzUuMzc1IDAgMSAxLS43NSAwYS4zNzUuMzc1IDAgMCAxIC43NSAwIi8+PC9zdmc+";
+                    const i = new IntersectionObserver(s => {
+                        Ro(s, l => {
+                            if (l.isIntersecting) {
+                                const c = new Image;
+                                c.src = o.value, c.onload = () => e.src = o.value, i.unobserve(l.target)
+                            }
+                        })
+                    });
+                    i.observe(e)
+                }
+            })
+        }
+    },
+    Ft = ro(Oo);
+Ft.use(Fn).use(Dn);
+Ft.mount("#app");
