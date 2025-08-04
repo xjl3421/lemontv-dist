@@ -1,0 +1,21 @@
+{
+  "name": "lemon-mse",
+  "version": "0.5.4",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.index.js",
+  "scripts": {
+    "build": "bun run build.ts"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/bun": "^1.2.8",
+    "esbuild": "^0.25.1",
+    "esbuild-plugin-umd-wrapper": "^3.0.0",
+    "hls.js": "^1.6.0",
+    "typescript": "^5.8.2",
+    "xgplayer-flv": "^3.0.21"
+  }
+}
